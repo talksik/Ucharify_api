@@ -19,10 +19,5 @@ module.exports = (sequelize, DataTypes) => {
         freezeTableName: true,
         }
     );
-
-    Donors.associate = (models) => {
-        Donors.hasMany(models.campaigns);
-    };
-
     return Donors;
 }

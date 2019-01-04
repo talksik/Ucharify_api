@@ -19,10 +19,5 @@ module.exports = (sequelize, DataTypes) => {
         freezeTableName: true,
         }
     );
-
-    Campaigns.associate = (models) => {
-        Campaigns.belongsTo(models.donors);
-    };
-
     return Campaigns;
 }

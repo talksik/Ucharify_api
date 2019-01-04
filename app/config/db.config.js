@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize'),
-    DonorsModel = require('./models/Donors.js'),
-    CampaignsModel = require('./models/Campaigns.js');
-
+    DonorsModel = require('./models/donors.model.js'),
+    CampaignsModel = require('./models/campaigns.model.js');
+    
 
 const host = 'am1shyeyqbxzy8gc.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
     username = 'fyro63k2989tyibh',
@@ -28,16 +28,15 @@ const sequelize = new Sequelize(
     }
 );
 
-//creating tables from external files
+const db = {};
+
+//creating tables/models from imported function
 const Donors = DonorsModel(sequelize, Sequelize);
 const Campaigns = CampaignsModel(sequelize, Sequelize);
+db.donors = Donors;
+db.campaigns = Campaigns;
 
-sequelize.sync({ force: true })
-  .then(() => {
-    console.log(`Database & tables created!`)
-  })
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-module.exports = {
-  Donors,
-  Campaigns
-}
+module.exports = db;
