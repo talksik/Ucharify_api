@@ -19,18 +19,19 @@ db.sequelize
   });
 
 // force: true will drop the table if it already exists
-db.sequelize.sync({force: true}).then(() => {
-    console.log('Drop and Resync with { force: true }');
+const drop_tables = true;
+db.sequelize.sync({force: drop_tables}).then(() => {
+    console.log(`Drop and Resync with { force: ${drop_tables} }`);
   });
 
 
 //define a route, usually this would be a bunch of routes imported from another file
-router.get('/', function (req, res, next) {
+app.get('/', function (req, res, next) {
     res.send('Welcome to the Ucharify API');
 });
 
 //adding routes to Express app
-require('./app/routes/donors.route.js')(app);
+app.use('/api/donors', require('./app/routes/donors.route.js'));
 
 // Create a Server
 var server = app.listen(port, function () {

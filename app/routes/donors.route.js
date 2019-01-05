@@ -1,19 +1,21 @@
-module.exports = function(app) {
- 
-    const donors = require('../controllers/donors.controller.js');
- 
-    // Create a new Donor
-    app.post('/api/donors', donors.create);
- 
-    // Retrieve all Donor
-    app.get('/api/donors', donors.findAll);
- 
-    // Retrieve a single Donor by Id
-    app.get('/api/donors/:DonorId', donors.findById);
+const express = require('express'),
+    router = express.Router();
 
-    // Delete a Donor with Id
-    app.delete('/api/donors/:DonorId', donors.delete);
- 
-    // // Update a Donor with Id
-    // app.put('/api/donors/:DonorId', donors.update);
-}
+const donors = require('../controllers/donors.controller.js');
+
+// Create a new Donor
+router.post('/', donors.create);
+
+// Retrieve all Donor
+router.get('/', donors.findAll);
+
+// Retrieve a single Donor by Id
+router.get('/:DonorId', donors.findById);
+
+// Delete a Donor with Id
+router.delete('/:DonorId', donors.delete);
+
+// // Update a Donor with Id
+// router.put('/api/donors/:DonorId', donors.update);
+
+module.exports = router;
