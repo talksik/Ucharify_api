@@ -30,14 +30,14 @@ router.get('/', function (req, res, next) {
 });
 
 //adding routes to Express app
-require('./app/route/donors.route.js')(app);
+require('./app/routes/donors.route.js')(app);
 
 // Create a Server
 var server = app.listen(port, function () {
  
-  var host = server.address().address
-  var port = server.address().port
+  var host = server.address().address;
+  var port = server.address().port;
  
   //server is successful
-  console.log("App listening at http://%s:%s", host, port)
+  console.log(`App listening at port: ${port}`)
 })

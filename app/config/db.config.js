@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize'),
-    DonorsModel = require('./models/donors.model.js'),
-    CampaignsModel = require('./models/campaigns.model.js');
+    DonorsModel = require('../models/donors.model.js'),
+    CampaignsModel = require('../models/campaigns.model.js');
     
 
 const host = 'am1shyeyqbxzy8gc.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',

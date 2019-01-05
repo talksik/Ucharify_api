@@ -9,11 +9,12 @@ module.exports = (sequelize, DataTypes) => {
             middle_name: DataTypes.STRING,
             last_name: DataTypes.STRING,
             email: DataTypes.STRING,
-            phone: DataTypes.STRING,
+            age: DataTypes.INTEGER,
+            phone: DataTypes.INTEGER,
             address: DataTypes.STRING,
             city: DataTypes.STRING,
             state: DataTypes.STRING,
-            country: DataTypes.STRING,
+            country: DataTypes.STRING
         },
         {
         freezeTableName: true,
