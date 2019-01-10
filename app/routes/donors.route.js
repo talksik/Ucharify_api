@@ -1,13 +1,14 @@
 const express = require('express'),
-    router = express.Router();
+	router = express.Router(),
+	checkAuth = require('../middleware/check-auth');
 
 const donors = require('../controllers/donors.controller.js');
 
 // Create a new Donor
 router.post('/', donors.create);
 
-// Retrieve all Donor
-router.get('/', donors.findAll);
+// Retrieve all Donors
+router.get('/', checkAuth, donors.findAll);
 
 // Retrieve a single Donor by Id
 router.get('/:DonorId', donors.findById);

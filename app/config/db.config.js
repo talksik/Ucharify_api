@@ -1,32 +1,29 @@
 const Sequelize = require('sequelize'),
-    DonorsModel = require('../models/donors.model.js'),
-    CampaignsModel = require('../models/campaigns.model.js');
-    
+	DonorsModel = require('../models/donors.model.js'),
+	CampaignsModel = require('../models/campaigns.model.js');
 
 const host = 'am1shyeyqbxzy8gc.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
-    username = 'fyro63k2989tyibh',
-    password = 'ykjkyenyvxig208z',
-    port = '3306',
-    database = 'n0j9gxnf4ijr7g8t';
+	username = 'fyro63k2989tyibh',
+	password = 'ykjkyenyvxig208z',
+	port = '3306',
+	database = 'n0j9gxnf4ijr7g8t';
 
-const sequelize = new Sequelize(
-    database, 
-    username, 
-    password, 
-    {
-        host: host,
-        dialect: 'mysql',
-        operatorsAliases: false,
+const sequelize = new Sequelize(database, username, password, {
+	host: host,
+	dialect: 'mysql',
+	operatorsAliases: false,
 
-        // research for pool/connections
-        pool: {
-            max: 5,
-            min: 0,
-            acquire: 30000,
-            idle: 10000
-        }
-    }
-);
+	// research for pool/connections
+	pool: {
+		max: 5,
+		min: 0,
+		acquire: 30000,
+		idle: 10000
+	},
+
+	// disable logging; default: console.log
+	logging: false
+});
 
 const db = {};
 
