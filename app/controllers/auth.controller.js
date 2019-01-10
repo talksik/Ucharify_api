@@ -1,7 +1,6 @@
 const db = require('../config/db.config.js'),
 	bcrypt = require('bcrypt-nodejs'),
-	jwt = require('jsonwebtoken'),
-	checkAuth = require('../middleware/check-auth');
+	jwt = require('jsonwebtoken');
 
 const Donors = db.donors;
 
@@ -18,37 +17,33 @@ exports.login = (req, res) => {
 					message: 'Auth failed'
 				});
 			}
-			bcrypt.compare(
-				req.body.password,
-				donors[0].password,
-				(error, result) => {
-					if (error) {
-						return res.status(401).json({
-							message: 'Auth failed'
-						});
-					}
-					if (result) {
-						const token = jwt.sign(
-							{
-								email: donors[0].email,
-								id: donors[0].id
-							},
-							process.env.JWT_KEY,
-							{
-								expiresIn: '1h'
-							}
-						);
-						return res.status(200).json({
-							message: 'Auth successful',
-							donor: donors[0],
-							token
-						});
-					}
+			bcrypt.compare(req.body.password, donors[0].password, (error, result) => {
+				if (error) {
 					return res.status(401).json({
 						message: 'Auth failed'
 					});
 				}
-			);
+				if (result) {
+					const token = jwt.sign(
+						{
+							email: donors[0].email,
+							id: donors[0].id
+						},
+						process.env.JWT_KEY,
+						{
+							expiresIn: '1h'
+						}
+					);
+					return res.status(200).json({
+						message: 'Auth successful',
+						donor: donors[0],
+						token
+					});
+				}
+				return res.status(401).json({
+					message: 'Auth failed'
+				});
+			});
 		})
 		.catch(error => {
 			console.log(error);
