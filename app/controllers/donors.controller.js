@@ -18,10 +18,7 @@ exports.create = (req, res) => {
 				});
 			} else {
 				// hash and store
-				bcrypt.hash(req.body.password, null, null, function(
-					error,
-					hash
-				) {
+				bcrypt.hash(req.body.password, null, null, function(error, hash) {
 					// Store hash in your password DB.
 					if (error) {
 						return res.status(500).json({
@@ -49,8 +46,6 @@ exports.create = (req, res) => {
 								});
 							})
 							.catch(error => {
-								console.log(error);
-
 								return res.status(500).json({
 									error
 								});
@@ -60,8 +55,6 @@ exports.create = (req, res) => {
 			}
 		})
 		.catch(error => {
-			console.log(error);
-
 			return res.status(500).json({
 				error
 			});

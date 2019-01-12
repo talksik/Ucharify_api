@@ -17,10 +17,7 @@ app.use((req, res, next) => {
 	);
 
 	if (req.method == 'OPTIONS') {
-		res.header(
-			'Access-Control-Allow-Methods',
-			'PUT, POST, GET, DELETE, PATCH'
-		);
+		res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, PATCH');
 		return res.status(200).json({});
 	}
 
@@ -51,6 +48,21 @@ app.get('/', function(req, res, next) {
 //adding routes to Express app
 app.use('/api/donors', require('./app/routes/donors.route.js'));
 app.use('/api/auth', require('./app/routes/auth.route.js'));
+
+app.use((req, res, next) => {
+	const error = new Error('Not found');
+	error.status = 404;
+	next(error);
+});
+
+app.use((error, req, res, next) => {
+	res.status(error.status || 500);
+	res.json({
+		error: {
+			message: error.message
+		}
+	});
+});
 
 // Create a Server
 var server = app.listen(port, function() {
