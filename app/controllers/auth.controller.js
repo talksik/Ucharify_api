@@ -1,11 +1,12 @@
 const db = require('../config/db.config.js'),
 	bcrypt = require('bcrypt-nodejs'),
-	jwt = require('jsonwebtoken');
+	jwt = require('jsonwebtoken'),
+	errorMaker = require('../helpers/error.maker');
 
 const Donors = db.donors;
 
 // Find a Donor by email + login with JWT
-exports.login = (req, res) => {
+exports.login = (req, res, next) => {
 	Donors.findAll({
 		where: {
 			email: req.body.email
@@ -13,15 +14,11 @@ exports.login = (req, res) => {
 	})
 		.then(donors => {
 			if (donors.length < 1) {
-				return res.status(401).json({
-					message: 'Auth failed'
-				});
+				return next(errorMaker(401, 'Invalid or nonexistent email'));
 			}
 			bcrypt.compare(req.body.password, donors[0].password, (error, result) => {
 				if (error) {
-					return res.status(401).json({
-						message: 'Auth failed'
-					});
+					return next(error);
 				}
 				if (result) {
 					const token = jwt.sign(
@@ -40,16 +37,8 @@ exports.login = (req, res) => {
 						token
 					});
 				}
-				return res.status(401).json({
-					message: 'Auth failed'
-				});
+				return next(errorMaker(401, 'Invalid user'));
 			});
 		})
-		.catch(error => {
-			console.log(error);
-
-			return res.status(500).json({
-				error
-			});
-		});
+		.catch(error => next(error));
 };

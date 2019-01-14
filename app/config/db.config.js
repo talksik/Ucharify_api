@@ -1,16 +1,10 @@
 const Sequelize = require('sequelize'),
 	DonorsModel = require('../models/donors.model.js'),
-	CampaignsModel = require('../models/campaigns.model.js');
+	GrantsModel = require('../models/grants.model.js');
 
-const host = 'am1shyeyqbxzy8gc.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
-	username = 'fyro63k2989tyibh',
-	password = 'ykjkyenyvxig208z',
-	port = '3306',
-	database = 'n0j9gxnf4ijr7g8t';
+const connection_uri = process.env.JAWSDB_MARIA_URL;
 
-const sequelize = new Sequelize(database, username, password, {
-	host: host,
-	dialect: 'mysql',
+const sequelize = new Sequelize(connection_uri, {
 	operatorsAliases: false,
 
 	// research for pool/connections
@@ -21,17 +15,24 @@ const sequelize = new Sequelize(database, username, password, {
 		idle: 10000
 	},
 
+	// default options for all models
+	define: {
+		underscored: true, // true: use underscore for automatically added attributes like timestamps below
+		freezeTableName: true, // true: table name/first parameter of define method will be table name
+		timestamps: true // createdAt and updatedAt automatically added
+	},
+
 	// disable logging; default: console.log
 	logging: false
 });
 
 const db = {};
 
-//creating tables/models from imported function
+//creating tables/models from imported functions
 const Donors = DonorsModel(sequelize, Sequelize);
-const Campaigns = CampaignsModel(sequelize, Sequelize);
+const Grants = GrantsModel(sequelize, Sequelize);
 db.donors = Donors;
-db.campaigns = Campaigns;
+db.grants = Grants;
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

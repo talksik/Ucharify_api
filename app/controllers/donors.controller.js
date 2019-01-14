@@ -13,17 +13,13 @@ exports.create = (req, res) => {
 	})
 		.then(donors => {
 			if (donors.length >= 1) {
-				return res.status(409).json({
-					message: 'Email exists'
-				});
+				return next(errorMaker(409, `Email Exists: ${req.body.email}`));
 			} else {
 				// hash and store
 				bcrypt.hash(req.body.password, null, null, function(error, hash) {
 					// Store hash in your password DB.
 					if (error) {
-						return res.status(500).json({
-							error
-						});
+						return next(error);
 					} else {
 						Donors.create({
 							first_name: req.body.first_name,
@@ -45,20 +41,12 @@ exports.create = (req, res) => {
 									donor
 								});
 							})
-							.catch(error => {
-								return res.status(500).json({
-									error
-								});
-							});
+							.catch(error => next(error));
 					}
 				});
 			}
 		})
-		.catch(error => {
-			return res.status(500).json({
-				error
-			});
-		});
+		.catch(error => next(error));
 };
 
 // FETCH all Donors

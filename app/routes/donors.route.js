@@ -4,7 +4,7 @@ const express = require('express'),
 
 const donors = require('../controllers/donors.controller.js');
 
-// Create a new Donor
+// Signup route
 router.post('/', donors.create);
 
 // Retrieve all Donors
