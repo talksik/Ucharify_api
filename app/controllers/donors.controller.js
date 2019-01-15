@@ -1,10 +1,11 @@
 const db = require('../config/db.config.js'),
-	bcrypt = require('bcrypt-nodejs');
+	bcrypt = require('bcrypt-nodejs'),
+	errorMaker = require('../helpers/error.maker');
 
 const Donors = db.donors;
 
 // Create/post a Donor
-exports.create = (req, res) => {
+exports.create = (req, res, next) => {
 	// see if user already in db
 	Donors.findAll({
 		where: {
@@ -50,10 +51,13 @@ exports.create = (req, res) => {
 };
 
 // FETCH all Donors
-exports.findAll = (req, res) => {
+exports.findAll = (req, res, next) => {
 	Donors.findAll().then(donors => {
 		// Send all donors to Client
-		res.status(200).send(donors);
+		res.status(200).json({
+			donors,
+			number_donors: donors.length
+		});
 	});
 };
 
