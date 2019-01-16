@@ -3,7 +3,7 @@ const db = require('../config/db.config.js'),
 	jwt = require('jsonwebtoken'),
 	errorMaker = require('../helpers/error.maker');
 
-const Donors = db.donors;
+const Donors = db.Donors;
 
 // Find a Donor by email + login with JWT
 exports.login = (req, res, next) => {

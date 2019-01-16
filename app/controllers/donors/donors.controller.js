@@ -1,8 +1,8 @@
-const db = require('../config/db.config.js'),
+const db = require('../../config/db.config.js'),
 	bcrypt = require('bcrypt-nodejs'),
-	errorMaker = require('../helpers/error.maker');
+	errorMaker = require('../../helpers/error.maker');
 
-const Donors = db.donors;
+const Donors = db.Donors;
 
 // Create/post a Donor
 exports.create = (req, res, next) => {

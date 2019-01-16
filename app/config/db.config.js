@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize'),
 	DonorsModel = require('../models/donors.model.js'),
-	GrantsModel = require('../models/grants.model.js');
+	GrantsModel = require('../models/grants.model.js'),
+	associate = require('./associate');
 
 const connection_uri = process.env.JAWSDB_MARIA_URL;
 
@@ -31,8 +32,11 @@ const db = {};
 //creating tables/models from imported functions
 const Donors = DonorsModel(sequelize, Sequelize);
 const Grants = GrantsModel(sequelize, Sequelize);
-db.donors = Donors;
-db.grants = Grants;
+db.Donors = Donors;
+db.Grants = Grants;
+
+// make associations with created models
+associate(db);
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;

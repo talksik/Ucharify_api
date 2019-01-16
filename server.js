@@ -5,8 +5,6 @@ const express = require('express'),
 	port = process.env.PORT,
 	db = require('./app/config/db.config.js');
 
-console.log(process.env.JAWSDB_MARIA_URL);
-
 app.use(bodyParser.json());
 
 //handle CORS errors
