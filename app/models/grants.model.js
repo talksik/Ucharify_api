@@ -18,9 +18,18 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false,
 			default: new Date()
 		},
-		monthly: DataTypes.BOOLEAN,
-		num_causes: DataTypes.INTEGER,
-		num_regions: DataTypes.INTEGER
+		monthly: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false
+		},
+		num_causes: {
+			type: DataTypes.INTEGER,
+			allowNull: false
+		},
+		num_regions: {
+			type: DataTypes.INTEGER,
+			allowNull: false
+		}
 	});
 	return Grants;
 };

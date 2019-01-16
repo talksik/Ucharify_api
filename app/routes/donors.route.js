@@ -11,7 +11,7 @@ router.post('/', donors.create);
 // Retrieve all Donors
 router.get('/', checkAuth, donors.findAll);
 
-// Retrieve grants with cause and region and charity details by donor_id
+// Retrieve grants with causes and regions and charities details by donor_id
 router.get('/grants/:donor_id', checkAuth, grants.findByDonorId);
 
 /** Create grants with following body:

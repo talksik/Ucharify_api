@@ -22,6 +22,7 @@ exports.findByDonorId = (req, res, next) => {
 		}
 	})
 		.then(grants => {
+			const grants_full_info = grants.map(grant => {});
 			res.status(200).json({
 				grants,
 				number_grants: grants.length
