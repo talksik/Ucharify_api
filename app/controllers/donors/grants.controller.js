@@ -14,27 +14,36 @@ exports.create = (req, res, next) => {
 	});
 };
 
-// Find grants with cause and region and charity details by Id
+// Find grants with cause and region and charity details by donor_id
 exports.findByDonorId = (req, res, next) => {
 	Grants.findAll({
 		where: {
 			donor_id: req.params.donor_id
 		}
-	})
-		.then(grants => {
-			const grants_full_info = grants.map(grant => {
+	}).then(grants => {
+		Promise.all(
+			grants.map(grant => {
 				const causes = grant.getCauses({ raw: true }).then(causes => causes),
 					regions = grant.getRegions({ raw: true }).then(regions => regions),
 					organizations = grant
 						.getOrganizations({ raw: true })
 						.then(organizations => organizations);
-				return { grant, causes, regions, organizations };
-			});
-
-			res.status(200).json({
-				grants: grants_full_info,
-				number_grants: grants_full_info.length
-			});
-		})
-		.catch(error => next(error));
+				return Promise.all([causes, regions, organizations]).then(data => {
+					return {
+						grant,
+						causes: data[0],
+						regions: data[1],
+						organizations: data[2]
+					};
+				});
+			})
+		)
+			.then(list_grants => {
+				res.status(200).json({
+					grants: list_grants,
+					number_grants: list_grants.length
+				});
+			})
+			.catch(error => next(error));
+	});
 };
