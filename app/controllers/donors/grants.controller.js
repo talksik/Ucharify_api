@@ -22,10 +22,18 @@ exports.findByDonorId = (req, res, next) => {
 		}
 	})
 		.then(grants => {
-			const grants_full_info = grants.map(grant => {});
+			const grants_full_info = grants.map(grant => {
+				const causes = grant.getCauses({ raw: true }).then(causes => causes),
+					regions = grant.getRegions({ raw: true }).then(regions => regions),
+					organizations = grant
+						.getOrganizations({ raw: true })
+						.then(organizations => organizations);
+				return { grant, causes, regions, organizations };
+			});
+
 			res.status(200).json({
-				grants,
-				number_grants: grants.length
+				grants: grants_full_info,
+				number_grants: grants_full_info.length
 			});
 		})
 		.catch(error => next(error));
