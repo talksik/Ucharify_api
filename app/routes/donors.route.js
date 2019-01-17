@@ -15,7 +15,7 @@ router.get('/', checkAuth, donors.findAll);
 router.get('/grants/:donor_id', checkAuth, grants.findByDonorId);
 
 /** Create grants with following body:
- * - list of id's selected causes and regions
+ * - list of id's of selected causes and regions
  * - FINAL list of id's of selected organizations
  * - donor_id
  * */

@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		last_payment: {
 			type: DataTypes.DATE,
-			allowNull: false,
 			default: new Date()
 		},
 		monthly: {
