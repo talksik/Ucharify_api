@@ -1,7 +1,7 @@
 const db = require('../../config/db.config.js'),
 	errorMaker = require('../../helpers/error.maker');
 
-const Grants = db.Grants;
+const { Grants, Causes, Regions, Organizations } = db;
 
 // Create a grant for certain donor
 exports.create = (req, res, next) => {
@@ -16,6 +16,7 @@ exports.create = (req, res, next) => {
 	} = req.body;
 
 	Grants.create({
+		donor_id,
 		name,
 		amount,
 		monthly,
@@ -37,12 +38,28 @@ exports.create = (req, res, next) => {
 			);
 
 			Promise.all([
-				grant.addCauses(grants_causes_rows),
-				grant.addRegions(grants_regions_rows),
-				grant.addOrganizations(grants_organizations_rows)
-			]).then(results => {
-				res.status(201).json(results);
-			});
+				grants_causes_rows,
+				grants_regions_rows,
+				grants_organizations_rows
+			])
+				.then(results => {
+					Causes.bulkCreate(results[0], { raw: true }).then(causes => {
+						grant.addCauses(causes);
+						// console.log(causes);
+					});
+					console.log(results[1]);
+					Regions.bulkCreate(results[1], { raw: true }).then(regions => {
+						grant.addCauses(regions);
+						// console.log(regions);
+					});
+					Organizations.bulkCreate(results[2], { raw: true }).then(
+						organizations => {
+							grant.addCauses(organizations);
+							// console.log(organizations);
+						}
+					);
+				})
+				.catch(error => next(error));
 		})
 		.catch(error => next(error));
 };
@@ -56,10 +73,10 @@ exports.findByDonorId = (req, res, next) => {
 	}).then(grants => {
 		Promise.all(
 			grants.map(grant => {
-				const causes = grant.getCauses({ raw: true }).then(causes => causes),
-					regions = grant.getRegions({ raw: true }).then(regions => regions),
+				const causes = grant.getCauses().then(causes => causes),
+					regions = grant.getRegions().then(regions => regions),
 					organizations = grant
-						.getOrganizations({ raw: true })
+						.getOrganizations()
 						.then(organizations => organizations);
 				return Promise.all([causes, regions, organizations]).then(data => {
 					return {
