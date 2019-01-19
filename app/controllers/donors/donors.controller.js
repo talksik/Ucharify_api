@@ -38,7 +38,7 @@ exports.create = (req, res, next) => {
 							.then(donor => {
 								// Send created donor to client
 								return res.status(201).json({
-									message: 'User created',
+									message: 'Donor created',
 									donor
 								});
 							})

@@ -3,9 +3,12 @@ const express = require('express'),
 	app = express(),
 	bodyParser = require('body-parser'),
 	port = process.env.PORT,
-	db = require('./app/config/db.config.js');
+	db = require('./app/config/db.config.js'),
+	morgan = require('morgan');
 
+app.use(morgan('dev'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 //handle CORS errors
 app.use((req, res, next) => {

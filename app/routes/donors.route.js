@@ -21,6 +21,9 @@ router.get('/grants/:donor_id', checkAuth, grants.findByDonorId);
  * */
 router.post('/grants/:donor_id', checkAuth, grants.create);
 
+// Delete a grant of a donor
+router.delete('/grants/:grant_id', checkAuth, grants.delete);
+
 // // Retrieve a single Donor by Id
 // router.get('/:donor_id', donors.findById);
 
