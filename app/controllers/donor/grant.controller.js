@@ -1,14 +1,14 @@
 const db = require('../../config/db.config.js'),
 	errorMaker = require('../../helpers/error.maker');
 
-const { Grants, Causes, Regions, Organizations } = db;
+const { Grant, Cause, Region, Organization } = db;
 
 // Create a grant for certain donor
 exports.create = (req, res, next) => {
 	const donor_id = req.params.donor_id;
 	const { name, amount, monthly, causes, regions, organizations } = req.body;
 
-	Grants.create({
+	Grant.create({
 		donor_id,
 		name,
 		amount,
@@ -33,16 +33,16 @@ exports.create = (req, res, next) => {
 
 // Find grants with causes, regions, and organizations by donor_id
 exports.findByDonorId = (req, res, next) => {
-	Grants.findAll({
+	Grant.findAll({
 		where: {
 			donor_id: req.params.donor_id
 		},
-		include: [Causes, Regions, Organizations]
+		include: [Cause, Region, Organization]
 	})
 		.then(grants => {
 			res.status(200).json({
 				grants,
-				number_grants: grants.length
+				number_items: grants.length
 			});
 		})
 		.catch(error => next(error));
@@ -51,7 +51,7 @@ exports.findByDonorId = (req, res, next) => {
 exports.delete = (req, res, next) => {
 	const grant_id = req.params.grant_id;
 
-	Grants.destroy({ where: { id: grant_id } })
+	Grant.destroy({ where: { id: grant_id } })
 		.then(result => {
 			var message = 'Already Deleted';
 			if (result) {

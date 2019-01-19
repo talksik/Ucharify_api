@@ -48,8 +48,11 @@ app.get('/', function(req, res, next) {
 });
 
 //adding routes to Express app
-app.use('/api/donors', require('./app/routes/donors.route.js'));
+app.use('/api/donors', require('./app/routes/donor.route.js'));
+//auth route
 app.use('/api/auth', require('./app/routes/auth.route.js'));
+//general routes
+app.use('/api', require('./app/routes/general.route.js'));
 
 //404 not found error handling on any other routes
 app.use((req, res, next) => {

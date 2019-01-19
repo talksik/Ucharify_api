@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize'),
-	DonorsModel = require('../models/donors.model.js'),
-	GrantsModel = require('../models/grants.model.js'),
-	CausesModel = require('../models/causes.model.js'),
-	RegionsModel = require('../models/regions.model.js'),
-	OrganizationsModel = require('../models/organizations.model.js'),
+	DonorModel = require('../models/donor.model.js'),
+	GrantModel = require('../models/grant.model.js'),
+	CauseModel = require('../models/cause.model.js'),
+	RegionModel = require('../models/region.model.js'),
+	OrganizationModel = require('../models/organization.model.js'),
 	associate = require('./associate');
 
 const connection_uri = process.env.JAWSDB_MARIA_URL;
@@ -33,16 +33,16 @@ const sequelize = new Sequelize(connection_uri, {
 const db = {};
 
 //creating tables/models from imported functions
-const Donors = DonorsModel(sequelize, Sequelize);
-const Grants = GrantsModel(sequelize, Sequelize);
-const Causes = CausesModel(sequelize, Sequelize);
-const Regions = RegionsModel(sequelize, Sequelize);
-const Organizations = OrganizationsModel(sequelize, Sequelize);
-db.Donors = Donors;
-db.Grants = Grants;
-db.Causes = Causes;
-db.Regions = Regions;
-db.Organizations = Organizations;
+const Donor = DonorModel(sequelize, Sequelize);
+const Grant = GrantModel(sequelize, Sequelize);
+const Cause = CauseModel(sequelize, Sequelize);
+const Region = RegionModel(sequelize, Sequelize);
+const Organization = OrganizationModel(sequelize, Sequelize);
+db.Donor = Donor;
+db.Grant = Grant;
+db.Cause = Cause;
+db.Region = Region;
+db.Organization = Organization;
 
 // make associations with created models
 associate(db);

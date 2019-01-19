@@ -2,12 +2,12 @@ const db = require('../../config/db.config.js'),
 	bcrypt = require('bcrypt-nodejs'),
 	errorMaker = require('../../helpers/error.maker');
 
-const Donors = db.Donors;
+const Donor = db.Donor;
 
 // Create/post a Donor
 exports.create = (req, res, next) => {
 	// see if user already in db
-	Donors.findAll({
+	Donor.findAll({
 		where: {
 			email: req.body.email
 		}
@@ -22,7 +22,7 @@ exports.create = (req, res, next) => {
 					if (error) {
 						return next(error);
 					} else {
-						Donors.create({
+						Donor.create({
 							first_name: req.body.first_name,
 							middle_name: req.body.middle_name,
 							last_name: req.body.last_name,
@@ -50,9 +50,9 @@ exports.create = (req, res, next) => {
 		.catch(error => next(error));
 };
 
-// FETCH all Donors
+// FETCH all Donor
 exports.findAll = (req, res, next) => {
-	Donors.findAll().then(donors => {
+	Donor.findAll().then(donors => {
 		// Send all donors to Client
 		res.status(200).json({
 			donors,
@@ -63,7 +63,7 @@ exports.findAll = (req, res, next) => {
 
 // Find a Donor by Id
 exports.findById = (req, res) => {
-	Donors.findById(req.params.donor_id).then(donor => {
+	Donor.findById(req.params.donor_id).then(donor => {
 		res.send(donor);
 	});
 };
@@ -71,7 +71,7 @@ exports.findById = (req, res) => {
 // Delete a Donor by Id
 exports.delete = (req, res) => {
 	const id = req.params.donor_id;
-	Donors.destroy({
+	Donor.destroy({
 		where: { id: id }
 	}).then(() => {
 		res.status(200).send('deleted successfully a donor with id = ' + id);
@@ -81,7 +81,7 @@ exports.delete = (req, res) => {
 // // Update a Donor
 // exports.update = (req, res) => {
 // 	const id = req.params.donor_id;
-// 	Donors.update( { firstname: req.body.firstname, lastname: req.body.lastname, age: req.body.age },
+// 	Donor.update( { firstname: req.body.firstname, lastname: req.body.lastname, age: req.body.age },
 // 					 { where: {id: req.params.donorId} }
 // 				   ).then(() => {
 // 					 res.status(200).send("updated successfully a donor with id = " + id);

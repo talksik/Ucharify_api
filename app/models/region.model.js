@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const Regions = sequelize.define('regions', {
+	const Region = sequelize.define('regions', {
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
@@ -7,5 +7,5 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		name: { type: DataTypes.STRING, allowNull: false }
 	});
-	return Regions;
+	return Region;
 };

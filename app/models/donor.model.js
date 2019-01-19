@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const Donors = sequelize.define('donors', {
+	const Donor = sequelize.define('donors', {
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
@@ -32,5 +32,5 @@ module.exports = (sequelize, DataTypes) => {
 		state: DataTypes.STRING,
 		country: DataTypes.STRING
 	});
-	return Donors;
+	return Donor;
 };
