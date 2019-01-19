@@ -2,27 +2,41 @@ const express = require('express'),
 	router = express.Router(),
 	checkAuth = require('../middleware/check-auth');
 
-const donor = require('../controllers/donor/donor.controller.js');
-const grant = require('../controllers/donor/grant.controller.js');
+const controllers = require('../controllers/donor');
 
-// Signup route
-router.post('/', donor.create);
+// POST Signup route
+router.post('/', controllers.donor.create);
 
-// Retrieve all Donors
-router.get('/', checkAuth, donor.findAll);
+// GET Retrieve all Donors
+router.get('/', checkAuth, controllers.donor.findAll);
 
-// Retrieve grants with causes and regions and charities details by donor_id
-router.get('/grants/:donor_id', checkAuth, grant.findByDonorId);
+// GET Retrieve grants with causes and regions and charities details by donor_id
+router.get('/grants/:donor_id', checkAuth, controllers.grant.findByDonorId);
 
-/** Create grants with following body:
+/** POST Create grants with following body:
  * - list of id's of selected causes and regions
  * - FINAL list of id's of selected organizations
  * - donor_id
  * */
-router.post('/grants/:donor_id', checkAuth, grant.create);
+router.post('/grants/:donor_id', checkAuth, controllers.grant.create);
 
-// Delete a grant of a donor
-router.delete('/grants/:grant_id', checkAuth, grant.delete);
+// DELECT a grant of a donor
+router.delete('/grants/:grant_id', checkAuth, controllers.grant.delete);
+
+// GET suggested organizations to distribute to
+// running "the algorithm"
+router.get(
+	'/organizations/',
+	checkAuth,
+	controllers.organization.findSuggested
+);
+
+// GET min and optimal amount to choose
+router.get(
+	'/organizations/amounts',
+	checkAuth,
+	controllers.organization.findAmounts
+);
 
 // // Retrieve a single Donor by Id
 // router.get('/:donor_id', donor.findById);
