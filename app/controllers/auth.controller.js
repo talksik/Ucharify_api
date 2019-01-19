@@ -26,10 +26,7 @@ exports.login = (req, res, next) => {
 							email: donors[0].email,
 							id: donors[0].id
 						},
-						process.env.JWT_KEY,
-						{
-							expiresIn: '1h'
-						}
+						process.env.JWT_KEY
 					);
 					return res.status(200).json({
 						message: 'Auth successful',
