@@ -11,7 +11,7 @@ router.post('/', controllers.donor.create);
 router.get('/', checkAuth, controllers.donor.findAll);
 
 // GET Retrieve grants with causes and regions and charities details by donor_id
-router.get('/grants/:donor_id', checkAuth, controllers.grant.findByDonorId);
+router.get('/grants/', checkAuth, controllers.grant.findByDonorId);
 
 /** POST Create grants with following body:
  * - list of id's of selected causes and regions
