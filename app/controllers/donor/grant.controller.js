@@ -25,6 +25,7 @@ exports.create = (req, res, next) => {
 		})
 		.then(result => {
 			res.status(201).json({
+				result,
 				message: 'Grant Created'
 			});
 		})
@@ -58,8 +59,8 @@ exports.delete = (req, res, next) => {
 				message = 'Grant Deleted';
 			}
 			res.status(201).json({
-				message,
-				result
+				result,
+				message
 			});
 		})
 		.catch(error => next(error));

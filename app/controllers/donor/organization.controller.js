@@ -7,7 +7,7 @@ const log10 = val => {
 	return Math.log(val) / Math.log(10);
 };
 
-// GET suggested organizations based on chosen causes + regions
+// POST to get suggested organizations based on chosen causes + regions
 exports.findSuggested = (req, res, next) => {
 	const { amount, causes, regions } = req.body;
 
@@ -23,12 +23,12 @@ exports.findSuggested = (req, res, next) => {
 			replacements: { causes, regions, max_orgs },
 			type: db.Sequelize.QueryTypes.SELECT
 		})
-		.then(orgs => {
+		.then(organizations => {
 			res.status(200).json({
-				orgs,
-				num_items: orgs.length,
+				organizations,
+				num_items: organizations.length,
 				max_orgs,
-				distribution: amount / orgs.length
+				distribution: amount / organizations.length
 			});
 		})
 		.catch(error => next(error));

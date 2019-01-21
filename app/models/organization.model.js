@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
 		name: { type: DataTypes.STRING, allowNull: false },
 		short_description: DataTypes.STRING,
 		primary_cause: { type: DataTypes.STRING, allowNull: false },
-		primary_region: { type: DataTypes.STRING, allowNull: false }
+		primary_region: { type: DataTypes.STRING, allowNull: false },
+		rating: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false }
 	});
 	return Organization;
 };
