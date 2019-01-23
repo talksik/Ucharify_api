@@ -12,4 +12,8 @@ router.get('/regions', controllers.region.findAll);
 // Retrieve all organizations
 router.get('/organizations', controllers.organization.findAll);
 
+// Retrieve based on inputted search
+// limitted numer returned; empty input still returns orgs
+router.get('/organizations/:search', controllers.organization.searchOrgs);
+
 module.exports = router;
