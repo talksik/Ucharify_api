@@ -4,6 +4,7 @@ const Sequelize = require('sequelize'),
 	CauseModel = require('../models/cause.model.js'),
 	RegionModel = require('../models/region.model.js'),
 	OrganizationModel = require('../models/organization.model.js'),
+	UserModel = require('../models/user.model.js'),
 	associate = require('./associate');
 
 const connection_uri = process.env.JAWSDB_MARIA_URL;
@@ -38,11 +39,13 @@ const Grant = GrantModel(sequelize, Sequelize);
 const Cause = CauseModel(sequelize, Sequelize);
 const Region = RegionModel(sequelize, Sequelize);
 const Organization = OrganizationModel(sequelize, Sequelize);
+const User = UserModel(sequelize, Sequelize);
 db.Donor = Donor;
 db.Grant = Grant;
 db.Cause = Cause;
 db.Region = Region;
 db.Organization = Organization;
+db.User = User;
 
 // make associations with created models
 associate(db);

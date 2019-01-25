@@ -16,4 +16,7 @@ router.get('/organizations', controllers.organization.findAll);
 // limitted numer returned; empty input still returns orgs
 router.get('/organizations/:search', controllers.organization.searchOrgs);
 
+// Add email to database from the landing page
+router.post('/users/landing', controllers.user.addEmail);
+
 module.exports = router;
