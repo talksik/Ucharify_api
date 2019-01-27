@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		monthly: {
 			type: DataTypes.BOOLEAN,
-			allowNull: false
+			allowNull: false,
+			defaultValue: false
 		},
 		num_causes: {
 			type: DataTypes.INTEGER,

@@ -34,7 +34,7 @@ exports.create = (req, res, next) => {
 
 // Find grants with causes, regions, and organizations by donor_id
 exports.findByDonorId = (req, res, next) => {
-	const donor_id = req.user_data.id;
+	const donor_id = req.user.id;
 
 	Grant.findAll({
 		where: {

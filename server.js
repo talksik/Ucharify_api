@@ -53,6 +53,8 @@ app.use('/api/donors', require('./app/routes/donor.route.js'));
 app.use('/api/auth', require('./app/routes/auth.route.js'));
 //general routes
 app.use('/api', require('./app/routes/general.route.js'));
+//admin routes
+app.use('/admin', require('./app/routes/admin.route'));
 
 //404 not found error handling on any other routes
 app.use((req, res, next) => {
