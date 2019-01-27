@@ -11,6 +11,10 @@ const log10 = val => {
 exports.findSuggested = (req, res, next) => {
 	const { amount, causes, regions } = req.body;
 
+	if (amount == 0 || causes.length == 0 || regions.length == 0) {
+		return next(errorMaker(400, 'Invalid options for grant suggestions'));
+	}
+
 	// formula for max amount of organizations to choose
 	const max_orgs = Math.floor(1.5 * log10(amount));
 
