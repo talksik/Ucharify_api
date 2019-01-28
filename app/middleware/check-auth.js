@@ -14,7 +14,7 @@ module.exports = role => (req, res, next) => {
 		next();
 	} catch (error) {
 		error.message = 'Check Auth Error';
-		error.status = 401;
+		error.status = 403;
 		return next(error);
 	}
 };

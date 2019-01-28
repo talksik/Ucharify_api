@@ -37,7 +37,7 @@ exports.login = (type, role) => (req, res, next) => {
 					);
 					return res.status(200).json({
 						message: 'Auth successful',
-						donor: users[0],
+						user: users[0],
 						token
 					});
 				}
