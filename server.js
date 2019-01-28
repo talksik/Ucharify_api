@@ -47,8 +47,10 @@ app.get('/', function(req, res, next) {
 	res.send('Welcome to the Ucharify API');
 });
 
-//adding routes to Express app
+//donor routes
 app.use('/api/donors', require('./app/routes/donor.route.js'));
+//organization routes
+app.use('/api/org', require('./app/routes/organization.route'));
 //auth route
 app.use('/api/auth', require('./app/routes/auth.route.js'));
 //general routes
