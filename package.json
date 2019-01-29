@@ -6,7 +6,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "PORT=4200 & set JWT_KEY=secretkey & node server.js",
-		"dev": "nodemon bin/dev.js"
+		"dev": "nodemon bin/dev.js",
+		"drop": "node bin/DROP-FORCE.js"
 	},
 	"repository": {
 		"type": "git",
@@ -25,7 +26,8 @@
 		"jsonwebtoken": "^8.4.0",
 		"morgan": "^1.9.1",
 		"mysql2": "^1.6.4",
-		"sequelize": "^4.42.0"
+		"sequelize": "^4.42.0",
+		"stripe": "^6.22.0"
 	},
 	"devDependencies": {
 		"dotenv": "^6.2.0"

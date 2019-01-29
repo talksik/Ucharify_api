@@ -1,5 +1,5 @@
 module.exports = models => {
-	const { Donor, Grant, Cause, Region, Organization } = models;
+	const { Donor, Grant, Cause, Region, Organization, Charge } = models;
 
 	Donor.hasMany(Grant, { foreignKey: 'donor_id' });
 
@@ -19,5 +19,13 @@ module.exports = models => {
 		through: 'grants_organizations',
 		foreignKey: 'grant_id',
 		otherKey: 'organization_id'
+	});
+
+	Donor.hasMany(Charge, {
+		foreignKey: 'user_id'
+	});
+
+	Organization.hasMany(Charge, {
+		foreignKey: 'user_id'
 	});
 };

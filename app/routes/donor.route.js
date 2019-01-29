@@ -17,6 +17,7 @@ router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
 /** POST Create grants with following body:
  * - list of id's of selected causes and regions
  * - FINAL list of id's of selected organizations
+ * - monthly true or false
  * - donor_id
  * */
 router.post(
