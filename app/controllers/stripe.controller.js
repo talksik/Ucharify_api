@@ -9,7 +9,15 @@ const { Donor, Organization } = db;
 exports.grantCharge = async (req, res, next) => {
 	const { stripeToken, amount, monthly } = req.body;
 	console.log(req.body);
+	const user = req.user;
 
+	findStripeId(user.id)
+		.then(stripeId => {
+			if (!stripeId) {
+				stripe.customers.create({});
+			}
+		})
+		.catch(error => next(error));
 	// if (!monthly) {
 	// 	const charge = stripe.charges.create({
 	// 		amount,
@@ -19,4 +27,18 @@ exports.grantCharge = async (req, res, next) => {
 	// 		statement_descriptor: 'One time payment for grant'
 	// 	});
 	// }
+};
+
+const findStripeId = userId => {
+	return new Promise((resolve, reject) => {
+		Donor.findAll({ where: { id: userId } })
+			.then(donors => {
+				// add stripe id for
+				// if (donors[0]) {
+				// 	return next(errorMaker(409, `Email Exists: ${req.body.email}`));
+				// }
+				resolve(donors[0].stripe_id);
+			})
+			.catch(error => reject(error));
+	});
 };
