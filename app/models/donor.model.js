@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.UUID,
 			defaultValue: null
 		},
+		subscription_id: {
+			type: DataTypes.UUID,
+			defaultValue: null
+		},
 		first_name: {
 			type: DataTypes.STRING,
 			allowNull: false

@@ -10,10 +10,6 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.UUID,
 			allowNull: false
 		},
-		subscription_id: {
-			type: DataTypes.UUID,
-			allowNull: false
-		},
 		amount: {
 			type: DataTypes.INTEGER,
 			allowNull: false
