@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true,
 			autoIncrement: true
 		},
+		stripe_id: {
+			type: DataTypes.UUID,
+			defaultValue: null
+		},
 		first_name: {
 			type: DataTypes.STRING,
 			allowNull: false

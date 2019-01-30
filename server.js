@@ -37,7 +37,7 @@ db.sequelize
 	});
 
 //force: true will drop the table if it already exists
-const drop_tables = false;
+const drop_tables = true;
 db.sequelize.sync({ force: drop_tables }).then(() => {
 	console.log(`Drop and Resync with { force: ${drop_tables} }`);
 });
