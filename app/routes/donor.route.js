@@ -20,11 +20,7 @@ router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
  * - monthly true or false
  * - donor_id
  * */
-router.post(
-	'/grants/:donor_id',
-	checkAuth(roles.DONOR),
-	controllers.grant.create
-);
+router.post('/grants/', checkAuth(roles.DONOR), controllers.grant.create);
 
 // DELECT a grant of a donor
 router.delete(

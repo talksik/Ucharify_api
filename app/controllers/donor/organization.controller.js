@@ -20,7 +20,7 @@ exports.findSuggested = (req, res, next) => {
 
 	const QUERY =
 		'SELECT * from organizations ' +
-		'WHERE primary_cause IN (:causes) and primary_region IN (:regions) ' +
+		'WHERE primary_cause IN (:causes) or primary_region IN (:regions) ' +
 		'LIMIT :max_orgs';
 	db.sequelize
 		.query(QUERY, {

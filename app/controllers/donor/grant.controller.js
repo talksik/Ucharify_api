@@ -1,35 +1,44 @@
 const db = require('../../config/db.config.js'),
 	errorMaker = require('../../helpers/error.maker');
 
-const { Grant, Cause, Region, Organization } = db;
+const { Grant, Cause, Region, Organization, sequelize } = db;
 
 // Create a grant for certain donor
 exports.create = (req, res, next) => {
-	const donor_id = req.params.donor_id;
+	const donor_id = req.user.id;
 	const { name, amount, monthly, causes, regions, organizations } = req.body;
 
-	Grant.create({
-		donor_id,
-		name,
-		amount,
-		monthly,
-		num_causes: causes.length,
-		num_regions: regions.length
-	})
-		.then(grant => {
-			return Promise.all([
-				grant.addCauses(causes),
-				grant.addRegions(regions),
-				grant.addOrganizations(organizations)
-			]).then(result => result);
+	return sequelize
+		.transaction(function(t) {
+			return Grant.create(
+				{
+					donor_id,
+					name,
+					amount,
+					monthly,
+					num_causes: causes.length,
+					num_regions: regions.length
+				},
+				{ transaction: t }
+			).then(grant => {
+				return Promise.all([
+					grant.addCauses(causes, { transaction: t }),
+					grant.addRegions(regions, { transaction: t }),
+					grant.addOrganizations(organizations, { transaction: t })
+				]).then(result => grant);
+			});
 		})
-		.then(result => {
+		.then(function(grant) {
+			// transaction committed
 			res.status(201).json({
-				result,
+				grant,
 				message: 'Grant Created'
 			});
 		})
-		.catch(error => next(error));
+		.catch(function(error) {
+			// transaction rollback
+			next(error);
+		});
 };
 
 // Find grants with causes, regions, and organizations by donor_id
