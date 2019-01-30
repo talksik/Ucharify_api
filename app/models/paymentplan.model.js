@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 			autoIncrement: true
 		},
 		plan_id: {
+			unique: true,
 			type: DataTypes.UUID,
 			allowNull: false
 		},
