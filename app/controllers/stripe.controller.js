@@ -51,7 +51,7 @@ exports.grantCharge = async (req, res, next) => {
 		} else {
 			const plan = await stripe.plans.create({
 				id: grant_id,
-				nickname: `Grant for grant: ${grant_id}`,
+				nickname: `Plan for grant: ${grant_id}`,
 				product: product_id,
 				currency: 'usd',
 				interval: 'month',
