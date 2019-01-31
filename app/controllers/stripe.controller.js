@@ -9,6 +9,7 @@ const { Donor, Charge, PaymentPlan } = db;
 exports.grantCharge = async (req, res, next) => {
 	const { stripeToken, grant_id, amount, monthly } = req.body;
 	const user = req.user;
+	const product_id = 'prod_ER3jOog6QMX1GP';
 
 	try {
 		const donors = await Donor.findAll({ where: { id: user.id } });
@@ -26,6 +27,7 @@ exports.grantCharge = async (req, res, next) => {
 
 			await Donor.update({ stripe_id }, { where: { id: user.id } });
 		}
+		// TODO: if there is, then update with the given source
 
 		var result;
 
@@ -50,7 +52,7 @@ exports.grantCharge = async (req, res, next) => {
 			const plan = await stripe.plans.create({
 				id: grant_id,
 				nickname: `Grant for grant: ${grant_id}`,
-				product: 'prod_ER3jOog6QMX1GP',
+				product: product_id,
 				currency: 'usd',
 				interval: 'month',
 				amount
