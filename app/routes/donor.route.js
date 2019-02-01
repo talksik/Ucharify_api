@@ -23,11 +23,7 @@ router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
 router.post('/grants/', checkAuth(roles.DONOR), controllers.grant.create);
 
 // DELECT a grant of a donor
-router.delete(
-	'/grants/:grant_id',
-	checkAuth(roles.DONOR),
-	controllers.grant.delete
-);
+router.delete('/grants/', checkAuth(roles.DONOR), controllers.grant.delete);
 
 // POST to get suggested organizations to distribute to
 // running "the algorithm"

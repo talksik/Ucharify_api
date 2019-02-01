@@ -61,14 +61,16 @@ exports.findByDonorId = (req, res, next) => {
 };
 
 exports.delete = (req, res, next) => {
-	const grant_id = req.params.grant_id;
+	const { grant_id } = req.body;
+	const user = req.user;
 
-	Grant.destroy({ where: { id: grant_id } })
+	Grant.destroy({ where: { id: grant_id, donor_id: user.id } })
 		.then(result => {
 			var message = 'Already Deleted';
 			if (result) {
 				message = 'Grant Deleted';
 			}
+
 			res.status(201).json({
 				result,
 				message
