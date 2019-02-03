@@ -35,8 +35,8 @@ exports.create = (req, res, next) => {
 			// 	message: 'Grant Created'
 			// });
 
-			req.grant = grants.dataValues;
-			next();
+			next(grants.dataValues);
+			return null;
 		})
 		.catch(function(error) {
 			// transaction rollback

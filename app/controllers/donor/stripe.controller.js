@@ -6,9 +6,9 @@ const stripe = require('stripe')('sk_test_n8NCvCFjD1xFhGiEq6SI8CXj');
 const { Donor, Charge, PaymentPlan } = db;
 
 // Subscribe user to plan or one time charge
-exports.grantCharge = async (req, res, next) => {
+exports.grantCharge = async (grant, req, res, next) => {
 	const { stripeToken, monthly } = req.body;
-	const { grant_id } = req.grant;
+	const grant_id = await grant.id;
 
 	const amount = req.body.amount * 100; //stripe standards
 
@@ -54,7 +54,6 @@ exports.grantCharge = async (req, res, next) => {
 			result = charge;
 		} else {
 			const plan = await stripe.plans.create({
-				id: grant_id,
 				nickname: `Plan for grant: ${grant_id}`,
 				product: product_id,
 				currency: 'usd',
@@ -109,19 +108,19 @@ exports.deleteGrant = async (req, res, next) => {
 
 		// check if there are plans for that grant
 		if (!paymentPlans.length) {
-			res.status(400).json({
+			return res.status(400).json({
 				message: 'Not a valid grant'
 			});
 		} else {
 			const plan = paymentPlans[0];
 
+			//delete the plan/grant under the subscription for the user
 			await stripe.subscriptionItems.del(plan.sub_item_id);
-
-			res.status(201).json({
-				message: 'Removed monthly subscription plan',
-				plan
-			});
+			//delete the plan from the main product 'Grants'
+			await stripe.plans.del(plan.plan_id);
 		}
+
+		next();
 	} catch (error) {
 		next(error);
 	}

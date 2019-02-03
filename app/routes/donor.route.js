@@ -27,7 +27,7 @@ router.post(
 	controllers.stripe.grantCharge
 );
 
-// DELECT a grant of a donor
+// DELETE a grant of a donor
 router.delete(
 	'/grants/',
 	checkAuth(roles.DONOR),
