@@ -20,10 +20,20 @@ router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
  * - monthly true or false
  * - donor_id
  * */
-router.post('/grants/', checkAuth(roles.DONOR), controllers.grant.create);
+router.post(
+	'/grants/',
+	checkAuth(roles.DONOR),
+	controllers.grant.create,
+	controllers.stripe.grantCharge
+);
 
 // DELECT a grant of a donor
-router.delete('/grants/', checkAuth(roles.DONOR), controllers.grant.delete);
+router.delete(
+	'/grants/',
+	checkAuth(roles.DONOR),
+	controllers.stripe.deleteGrant,
+	controllers.grant.delete
+);
 
 // POST to get suggested organizations to distribute to
 // running "the algorithm"

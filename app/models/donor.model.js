@@ -7,11 +7,13 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		stripe_id: {
 			type: DataTypes.UUID,
-			defaultValue: null
+			defaultValue: null,
+			unique: true
 		},
 		subscription_id: {
 			type: DataTypes.UUID,
-			defaultValue: null
+			defaultValue: null,
+			unique: true
 		},
 		first_name: {
 			type: DataTypes.STRING,

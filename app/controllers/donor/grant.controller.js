@@ -28,12 +28,15 @@ exports.create = (req, res, next) => {
 				]).then(result => grant);
 			});
 		})
-		.then(function(grant) {
+		.then(function(grants) {
 			// transaction committed
-			res.status(201).json({
-				grant,
-				message: 'Grant Created'
-			});
+			// res.status(201).json({
+			// 	grant,
+			// 	message: 'Grant Created'
+			// });
+
+			req.grant = grants.dataValues;
+			next();
 		})
 		.catch(function(error) {
 			// transaction rollback

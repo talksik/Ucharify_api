@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
 		amount: {
 			type: DataTypes.INTEGER,
 			allowNull: false
+		},
+		sub_item_id: {
+			type: DataTypes.UUID,
+			unique: true
 		}
 	});
 
