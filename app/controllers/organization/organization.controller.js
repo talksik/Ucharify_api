@@ -6,8 +6,8 @@ const { Grant, Cause, Region, Organization } = db;
 
 // POST create an organization
 // Temporarily only use: name, email, password, short_description, primary_cause, primary_region
-exports.create = (req, res, next) => {
-	const {
+exports.create = async (req, res, next) => {
+	let {
 		name,
 		email,
 		password,
@@ -16,56 +16,64 @@ exports.create = (req, res, next) => {
 		primary_region
 	} = req.body;
 
-	// see if organization already in db
-	Organization.findAll({
-		where: {
-			email
+	primary_cause = primary_cause.trim().toLowerCase();
+	primary_region = primary_region.trim().toLowerCase();
+
+	let transaction;
+
+	try {
+		transaction = await db.sequelize.transaction();
+
+		const orgs = await Organization.findAll({ where: { email } });
+
+		if (orgs.length >= 1) {
+			return next(errorMaker(409, `Email Exists: ${email}`));
 		}
-	})
-		.then(orgs => {
-			if (orgs.length >= 1) {
-				return next(errorMaker(409, `Email Exists: ${email}`));
-			} else {
-				const QUERY = `SELECT c.name, r.name \
-                          FROM causes AS c, regions AS r 
-                          WHERE c.name = :primary_cause AND r.name = :primary_region`;
-				return db.sequelize
-					.query(QUERY, {
-						replacements: { primary_cause, primary_region },
-						type: db.Sequelize.QueryTypes.SELECT
-					})
-					.then(num => {
-						if (num.length < 1) {
-							// could not find the cause or region in the db
-							return next(errorMaker(401, `Not a valid cause or region`));
-						} else {
-							// hash and store
-							return bcrypt.hash(password, null, null, function(error, hash) {
-								// Store hash in your password DB.
-								if (error) {
-									return next(error);
-								} else {
-									Organization.create({
-										name,
-										email,
-										password: hash, //hashed password
-										short_description,
-										primary_cause,
-										primary_region
-									})
-										.then(org => {
-											// Send created org to client
-											return res.status(201).json({
-												message: 'Organization created',
-												org
-											});
-										})
-										.catch(error => next(error));
-								}
-							});
-						}
-					});
-			}
-		})
-		.catch(error => next(error));
+
+		const CAUSE_QUERY = `SELECT name FROM causes
+												WHERE name = :primary_cause`;
+		const causes = await db.sequelize.query(CAUSE_QUERY, {
+			replacements: { primary_cause },
+			type: db.Sequelize.QueryTypes.SELECT
+		});
+
+		const REGION_QUERY = `SELECT name FROM regions
+												WHERE name = :primary_region`;
+		const regions = await db.sequelize.query(REGION_QUERY, {
+			replacements: { primary_region },
+			type: db.Sequelize.QueryTypes.SELECT
+		});
+
+		// could not find the cause or region in the db, so add
+		if (!causes.length) {
+			await Cause.create({ name: primary_cause }, { transaction });
+		}
+		if (!regions.length) {
+			await Region.create({ name: primary_region }, { transaction });
+		}
+
+		const saltRounds = await bcrypt.genSaltSync(10);
+		// hash
+		const hashedPass = await bcrypt.hashSync(password, saltRounds);
+
+		// Store hash in DB
+		const org = await Organization.create({
+			name,
+			email,
+			password: hashedPass, //hashed password
+			short_description,
+			primary_cause,
+			primary_region
+		});
+
+		await transaction.commit();
+
+		return res.status(201).json({
+			message: 'Organization created',
+			org
+		});
+	} catch (error) {
+		await transaction.rollback();
+		next(error);
+	}
 };
