@@ -63,9 +63,20 @@ exports.grantCharge = async (grant, req, res, next) => {
 
 			// either create new sub with new plan, or append plan to existing sub
 			if (!subscription_id) {
+				const currDate = new Date();
+				const unixFirstNextMonth = Math.round(
+					new Date(
+						currDate.getFullYear(),
+						currDate.getMonth() + 1,
+						1
+					).getTime() / 1000
+				);
+
 				let subscription = await stripe.subscriptions.create({
 					customer: stripe_id,
-					items: [{ plan: default_plan_id }]
+					items: [{ plan: default_plan_id }],
+					billing_cycle_anchor: unixFirstNextMonth,
+					trial_end: unixFirstNextMonth
 				});
 
 				subscription_id = subscription.id;

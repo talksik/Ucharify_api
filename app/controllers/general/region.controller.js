@@ -1,5 +1,6 @@
 const db = require('../../config/db.config.js'),
-	errorMaker = require('../../helpers/error.maker');
+	errorMaker = require('../../helpers/error.maker'),
+	textCleaner = require('../../helpers/text_cleaner');
 
 const { Grant, Cause, Region, Organization } = db;
 
@@ -7,6 +8,11 @@ const { Grant, Cause, Region, Organization } = db;
 exports.findAll = (req, res, next) => {
 	Region.findAll()
 		.then(regions => {
+			regions = regions.map(region => {
+				region.name = textCleaner.titleCase(region.name);
+				return region;
+			});
+
 			res.status(200).json({
 				regions,
 				number_items: regions.length
