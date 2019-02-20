@@ -9,7 +9,7 @@ exports.create = (req, res, next) => {
 	const { name, amount, monthly, causes, regions, organizations } = req.body;
 
 	return sequelize
-		.transaction(function(t) {
+		.transaction(function (t) {
 			return Grant.create(
 				{
 					donor_id,
@@ -28,7 +28,7 @@ exports.create = (req, res, next) => {
 				]).then(result => grant);
 			});
 		})
-		.then(function(grants) {
+		.then(function (grants) {
 			// transaction committed
 			// res.status(201).json({
 			// 	grant,
@@ -38,7 +38,7 @@ exports.create = (req, res, next) => {
 			next(grants.dataValues);
 			return null;
 		})
-		.catch(function(error) {
+		.catch(function (error) {
 			// transaction rollback
 			next(error);
 		});
