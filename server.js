@@ -36,6 +36,7 @@ db.sequelize
 		console.error('Unable to connect to the database:', err);
 	});
 
+	console.log(process.env.DROP_TABLES);
 //force: true will drop the table if it already exists
 const drop_tables = false;
 db.sequelize.sync({ force: drop_tables }).then(() => {

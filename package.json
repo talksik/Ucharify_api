@@ -5,9 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "PORT=4200 & set JWT_KEY=secretkey & node server.js",
+		"start": "node server.js",
 		"dev": "nodemon bin/dev.js",
-		"drop": "nodemon bin/DROP-FORCE.js"
+		"drop": "DROP_TABLES=true & nodemon bin/dev.js"
 	},
 	"repository": {
 		"type": "git",
