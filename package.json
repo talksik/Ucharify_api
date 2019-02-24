@@ -4,10 +4,13 @@
 	"description": "Backend API for Ucharify. Completely separate infrastructure that connects to DB.",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node server.js",
 		"dev": "nodemon bin/dev.js",
-		"drop": "DROP_TABLES=true & nodemon bin/dev.js"
+		"test": "nodemon bin/test.js",
+		
+		"drop:local": "DROP_TABLES=true node bin/dev.js",
+		"drop:test": "DROP_TABLES=true node bin/test.js",
+
+		"start": "node server.js"
 	},
 	"repository": {
 		"type": "git",
@@ -30,6 +33,6 @@
 		"stripe": "^6.22.0"
 	},
 	"devDependencies": {
-		"dotenv": "^6.2.0"
+		"dotenv-flow": "^0.2.0"
 	}
 }

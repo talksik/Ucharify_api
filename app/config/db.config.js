@@ -7,7 +7,7 @@ const Sequelize = require('sequelize'),
 	UserModel = require('../models/user.model.js'),
 	PaymentPlanModel = require('../models/paymentplan.model'),
 	ChargeModel = require('../models/charge.model');
-associate = require('./associate');
+	associate = require('./associate');
 
 const connection_uri = process.env.JAWSDB_MARIA_URL;
 

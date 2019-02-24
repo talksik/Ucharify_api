@@ -30,15 +30,14 @@ app.use((req, res, next) => {
 db.sequelize
 	.authenticate()
 	.then(() => {
-		console.log('Connection has been established successfully.');
+		console.log('Connection has been established successfully: ' + process.env.NODE_ENV);
 	})
 	.catch(err => {
 		console.error('Unable to connect to the database:', err);
 	});
 
-	console.log(process.env.DROP_TABLES);
 //force: true will drop the table if it already exists
-const drop_tables = false;
+const drop_tables = process.env.DROP_TABLES;
 db.sequelize.sync({ force: drop_tables }).then(() => {
 	console.log(`Drop and Resync with { force: ${drop_tables} }`);
 });
