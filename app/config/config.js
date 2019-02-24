@@ -9,10 +9,10 @@ module.exports = {
 		dialect: 'mysql'
 	},
 	test: {
-		username: 'root',
-		password: null,
-		database: 'database_test',
-		host: '127.0.0.1',
+		username: 'w8h1251do7cg4w7o',
+		password: 'rpwk8opl1du3hheh',
+		database: 'ppssehyr7u6n8h4o',
+		host: 'thzz882efnak0xod.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',
 		dialect: 'mysql'
 	},
 	production: {
