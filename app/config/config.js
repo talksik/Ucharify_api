@@ -1,14 +1,14 @@
 require('dotenv/config');
 
 module.exports = {
-	development: {
+	local: {
 		username: 'root',
 		password: 'water',
-		database: 'base',
+		database: 'ucharify',
 		host: 'localhost',
 		dialect: 'mysql'
 	},
-	test: {
+	staging: {
 		username: 'root',
 		password: null,
 		database: 'database_test',
