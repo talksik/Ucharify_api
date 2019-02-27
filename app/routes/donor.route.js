@@ -9,7 +9,7 @@ const controllers = require('../controllers/donor');
 router.post('/', controllers.donor.create);
 
 // GET Retrieve all Donors
-router.get('/', checkAuth(roles.DONOR), controllers.donor.findAll);
+router.get('/', checkAuth(roles.ADMIN), controllers.donor.findAll);
 
 // GET Retrieve grants with causes and regions and charities details by donor_id
 router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
