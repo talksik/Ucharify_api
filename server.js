@@ -54,7 +54,7 @@ app.use('/api/org', require('./app/routes/organization.route'));
 //auth route
 app.use('/api/auth', require('./app/routes/auth.route.js'));
 //general routes
-app.use('/api', require('./app/routes/general.route.js'));
+app.use('/api', require('./app/routes/public.route.js'));
 //admin routes
 app.use('/admin', require('./app/routes/admin.route'));
 //stripe routes
@@ -69,7 +69,7 @@ app.use((req, res, next) => {
 
 //General error handler for anything
 app.use((error, req, res, next) => {
-	//can log the error internally
+	// can log the error internally
 	// console.log(error);
 
 	if (req.app.get('env') !== 'development' && req.app.get('env') !== 'test') {
@@ -85,9 +85,9 @@ app.use((error, req, res, next) => {
 
 // Create a Server
 var server = app.listen(port, function() {
-	var host = server.address().address;
+	var host = server.address();
 	var port = server.address().port;
-
+	
 	//server is successful
 	console.log(`App listening at port: ${port}`);
 });

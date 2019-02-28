@@ -5,10 +5,10 @@ const express = require('express'),
 
 const controllers = require('../controllers/admin');
 
-// PUT Manual verification of a charity
+// Manual verification of a charity
+// TODO: Add checkAuth(roles.ADMIN) back into middleware
 router.put(
 	'/org/:charity_id',
-	checkAuth(roles.ADMIN),
 	controllers.organization.verifyOrg
 );
 

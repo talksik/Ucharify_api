@@ -6,10 +6,8 @@
 	"scripts": {
 		"dev": "nodemon bin/dev.js",
 		"test": "nodemon bin/test.js",
-		
 		"drop:local": "DROP_TABLES=true node bin/dev.js",
 		"drop:test": "DROP_TABLES=true node bin/test.js",
-
 		"start": "node server.js"
 	},
 	"repository": {
@@ -30,6 +28,7 @@
 		"morgan": "^1.9.1",
 		"mysql2": "^1.6.4",
 		"sequelize": "^4.42.0",
+		"sequelize-cli": "^5.4.0",
 		"stripe": "^6.22.0"
 	},
 	"devDependencies": {

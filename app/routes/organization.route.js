@@ -5,13 +5,13 @@ const express = require('express'),
 
 const controllers = require('../controllers/organization');
 
-// POST Signup route
+// Charity signup route
 router.post('/', controllers.organization.create);
 
-// POST add cause
+// Add cause
 router.post('/cause', checkAuth(roles.ORGANIZATION), controllers.cause.create);
 
-// POST add region
+// Add region
 router.post(
 	'/region',
 	checkAuth(roles.ORGANIZATION),

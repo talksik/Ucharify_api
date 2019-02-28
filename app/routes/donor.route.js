@@ -5,19 +5,18 @@ const express = require('express'),
 
 const controllers = require('../controllers/donor');
 
-// POST Signup route
+// POST donor signup
 router.post('/', controllers.donor.create);
 
-// GET Retrieve all Donors
+// GET all Donors
 router.get('/', checkAuth(roles.ADMIN), controllers.donor.findAll);
 
-// GET Retrieve grants with causes and regions and charities details by donor_id
+// GET grants with causes, regions, charities by donor_id
 router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
 
 /** POST Create grants with following body:
- * - list of id's of selected causes and regions
- * - FINAL list of id's of selected organizations
- * - monthly true or false
+ * - List of id's of selected causes, regions, charities
+ * - Monthly: true or false
  * - donor_id
  * */
 router.post(
