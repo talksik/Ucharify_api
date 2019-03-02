@@ -5,7 +5,6 @@ const db = require('../../config/db.config.js'),
 const { Grant, Cause, Region, Organization } = db;
 
 // POST create an organization
-// Temporarily only use: name, email, password, short_description, primary_cause, primary_region
 exports.create = async (req, res, next) => {
 	let {
 		name,
@@ -13,7 +12,17 @@ exports.create = async (req, res, next) => {
 		password,
 		short_description,
 		primary_cause,
-		primary_region
+		primary_region,
+		ein,
+		primary_contact_first_name,
+		primary_contact_last_name,
+		phone,
+		country,
+		address,
+		city,
+		zip,
+		estimate_assets,
+		estimate_year_operating_cost
 	} = req.body;
 
 	primary_cause = primary_cause.trim().toLowerCase();
@@ -44,7 +53,7 @@ exports.create = async (req, res, next) => {
 			type: db.Sequelize.QueryTypes.SELECT
 		});
 
-		// could not find the cause or region in the db, so add
+		// cause or region not found
 		if (!causes.length) {
 			await Cause.create({ name: primary_cause }, { transaction });
 		}
@@ -53,7 +62,7 @@ exports.create = async (req, res, next) => {
 		}
 
 		const saltRounds = await bcrypt.genSaltSync(10);
-		// hash
+		// hash with salt rounds 
 		const hashedPass = await bcrypt.hashSync(password, saltRounds);
 
 		// Store hash in DB
@@ -63,7 +72,17 @@ exports.create = async (req, res, next) => {
 			password: hashedPass, //hashed password
 			short_description,
 			primary_cause,
-			primary_region
+			primary_region,
+			ein,
+			primary_contact_first_name,
+			primary_contact_last_name,
+			phone,
+			country,
+			address,
+			city,
+			zip,
+			estimate_assets,
+			estimate_year_operating_cost
 		});
 
 		await transaction.commit();

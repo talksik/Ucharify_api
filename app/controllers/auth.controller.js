@@ -7,6 +7,7 @@ const { Donor, Organization } = db;
 
 // Find a Donor/Org by email + login with JWT
 exports.login = (type, role) => (req, res, next) => {
+	console.log('haha');
 	const curr_types = {
 		donor: Donor,
 		org: Organization
