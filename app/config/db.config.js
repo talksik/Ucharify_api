@@ -6,7 +6,8 @@ const Sequelize = require('sequelize'),
 	OrganizationModel = require('../models/organization.model.js'),
 	UserModel = require('../models/user.model.js'),
 	PaymentPlanModel = require('../models/paymentplan.model'),
-	ChargeModel = require('../models/charge.model');
+	ChargeModel = require('../models/charge.model'),
+	OrgBankModel = require('../models/bank_info.model'),
 	associate = require('./associate');
 
 const connection_uri = process.env.JAWSDB_MARIA_URL;
@@ -44,6 +45,7 @@ const Organization = OrganizationModel(sequelize, Sequelize);
 const User = UserModel(sequelize, Sequelize);
 const Charge = ChargeModel(sequelize, Sequelize);
 const PaymentPlan = PaymentPlanModel(sequelize, Sequelize);
+const OrgBank = OrgBankModel(sequelize, Sequelize);
 db.Donor = Donor;
 db.Grant = Grant;
 db.Cause = Cause;
@@ -52,6 +54,7 @@ db.Organization = Organization;
 db.User = User;
 db.Charge = Charge;
 db.PaymentPlan = PaymentPlan;
+db.OrgBank = OrgBank;
 
 // make associations with created models
 associate(db);

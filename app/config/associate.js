@@ -6,7 +6,8 @@ module.exports = models => {
 		Region,
 		Organization,
 		Charge,
-		PaymentPlan
+		PaymentPlan,
+		OrgBank
 	} = models;
 
 	Donor.hasMany(Grant, { foreignKey: 'donor_id' });
@@ -39,4 +40,6 @@ module.exports = models => {
 	Grant.hasOne(PaymentPlan, {
 		foreignKey: 'grant_id'
 	});
+
+	Organization.hasOne(OrgBank);
 };
