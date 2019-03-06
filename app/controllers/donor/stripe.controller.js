@@ -10,7 +10,7 @@ exports.grantCharge = async (grant, req, res, next) => {
 	const { stripeToken, monthly } = req.body;
 	const grant_id = await grant.id;
 
-	const amount = req.body.amount * 100; //stripe standards
+	const amount = 100 * 100; //stripe standards
 
 	const user = req.user;
 	const product_id = 'prod_ER3jOog6QMX1GP',
@@ -42,15 +42,14 @@ exports.grantCharge = async (grant, req, res, next) => {
 				currency: 'usd',
 				source: 'tok_visa',
 				description: 'One time payment for grant',
-				statement_descriptor: 'one-time-grant',
-				transfer_group: 'Grant ' + grant_id
+				statement_descriptor: 'one-time-grant'
 			});
 
-			let transfers = stripe.transfers.create({
-				amount: 7000,
+			await stripe.transfers.create({
+				amount: amount - 1000,
 				currency: 'usd',
-				destination: '{CONNECTED_STRIPE_ACCOUNT_ID}',
-				transfer_group: '{ORDER10}'
+				source_transaction: charge.id,
+				destination: 'acct_1EAxzUIVW1uo07uH'
 			});
 
 			await Charge.create({

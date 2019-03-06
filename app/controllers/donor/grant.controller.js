@@ -43,7 +43,6 @@ exports.create = (req, res, next) => {
 			// 	grant,
 			// 	message: 'Grant Created'
 			// });
-			console.log(grants);
 
 			next(grants.dataValues);
 			return null;
