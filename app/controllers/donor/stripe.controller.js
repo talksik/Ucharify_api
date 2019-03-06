@@ -22,15 +22,15 @@ exports.grantCharge = async (grant, req, res, next) => {
 		// check if already a stripe customer
 		let { stripe_id, subscription_id } = donors[0];
 
-		if (!stripe_id) {
-			const customer = await stripe.customers.create({
-				source: stripeToken,
-				email: user.email
-			});
-			stripe_id = await customer.id;
+		// if (!stripe_id) {
+		// 	const customer = await stripe.customers.create({
+		// 		source: stripeToken,
+		// 		email: user.email
+		// 	});
+		// 	stripe_id = await customer.id;
 
-			await Donor.update({ stripe_id }, { where: { id: user.id } });
-		}
+		// 	await Donor.update({ stripe_id }, { where: { id: user.id } });
+		// }
 		// TODO: if there is, then update with the given source
 
 		var result;
@@ -40,9 +40,17 @@ exports.grantCharge = async (grant, req, res, next) => {
 			let charge = await stripe.charges.create({
 				amount,
 				currency: 'usd',
-				customer: stripe_id,
+				source: 'tok_visa',
 				description: 'One time payment for grant',
-				statement_descriptor: 'one-time-grant'
+				statement_descriptor: 'one-time-grant',
+				transfer_group: 'Grant ' + grant_id
+			});
+
+			let transfers = stripe.transfers.create({
+				amount: 7000,
+				currency: 'usd',
+				destination: '{CONNECTED_STRIPE_ACCOUNT_ID}',
+				transfer_group: '{ORDER10}'
 			});
 
 			await Charge.create({

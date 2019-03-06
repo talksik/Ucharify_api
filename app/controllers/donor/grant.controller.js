@@ -6,39 +6,49 @@ const { Grant, Cause, Region, Organization, sequelize } = db;
 // Create a grant for certain donor
 exports.create = (req, res, next) => {
 	const donor_id = req.user.id;
-	const { name, amount, monthly, causes, regions, organizations } = req.body;
+	const { name, amounts, monthly, causes, regions, organizations } = req.body;
+
+	const total_amount = 100;
 
 	return sequelize
-		.transaction(function (t) {
+		.transaction(function(t) {
 			return Grant.create(
 				{
 					donor_id,
 					name,
-					amount,
+					amount: total_amount,
 					monthly,
 					num_causes: causes.length,
 					num_regions: regions.length
 				},
-				{ transaction: t }
+				{
+					transaction: t
+				}
 			).then(grant => {
 				return Promise.all([
 					grant.addCauses(causes, { transaction: t }),
 					grant.addRegions(regions, { transaction: t }),
-					grant.addOrganizations(organizations, { transaction: t })
+					organizations.map(org => {
+						grant.addOrganization(org.id, {
+							through: { amount: org.amount },
+							transaction: t
+						});
+					})
 				]).then(result => grant);
 			});
 		})
-		.then(function (grants) {
+		.then(function(grants) {
 			// transaction committed
 			// res.status(201).json({
 			// 	grant,
 			// 	message: 'Grant Created'
 			// });
+			console.log(grants);
 
 			next(grants.dataValues);
 			return null;
 		})
-		.catch(function (error) {
+		.catch(function(error) {
 			// transaction rollback
 			next(error);
 		});

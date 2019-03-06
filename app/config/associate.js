@@ -7,7 +7,8 @@ module.exports = models => {
 		Organization,
 		Charge,
 		PaymentPlan,
-		OrgBank
+		OrgBank,
+		GrantsOrganizations
 	} = models;
 
 	Donor.hasMany(Grant, { foreignKey: 'donor_id' });
