@@ -22,8 +22,7 @@ router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
 router.post(
 	'/grants/',
 	checkAuth(roles.DONOR),
-	controllers.grant.create,
-	controllers.stripe.grantCharge
+	controllers.grant.create
 );
 
 // DELETE a grant of a donor

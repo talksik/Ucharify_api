@@ -6,11 +6,10 @@ const stripe = require('stripe')('sk_test_n8NCvCFjD1xFhGiEq6SI8CXj');
 const { Donor, Charge, PaymentPlan } = db;
 
 // Subscribe user to plan or one time charge
-exports.grantCharge = async (grant, req, res, next) => {
-	const { stripeToken, monthly } = req.body;
+exports.grantCharge = async (data, req, res) => {
+	const { stripeToken, organizations, monthly } = req.body;
+	const { total_amount, grant } = await data; // passed from grant controller
 	const grant_id = await grant.id;
-
-	const amount = 100 * 100; //stripe standards
 
 	const user = req.user;
 	const product_id = 'prod_ER3jOog6QMX1GP',
@@ -38,23 +37,29 @@ exports.grantCharge = async (grant, req, res, next) => {
 		// charge if not monthly, plan if it is
 		if (!monthly) {
 			let charge = await stripe.charges.create({
-				amount,
+				amount: total_amount,
 				currency: 'usd',
 				source: 'tok_visa',
 				description: 'One time payment for grant',
 				statement_descriptor: 'one-time-grant'
 			});
+			
+			let transfers = await organizations.map(async (org) => {
+				org.amount = org.amount * 100;
+				const applicationStripeFee = org.amount * 0.05;
 
-			await stripe.transfers.create({
-				amount: amount - 1000,
-				currency: 'usd',
-				source_transaction: charge.id,
-				destination: 'acct_1EAxzUIVW1uo07uH'
+				let t = await stripe.transfers.create({
+					amount: org.amount - applicationStripeFee,
+					currency: 'usd',
+					source_transaction: charge.id,
+					destination: 'acct_1EAxzUIVW1uo07uH'
+				});
+				return t;
 			});
 
 			await Charge.create({
 				id: charge.id,
-				amount,
+				amount: total_amount,
 				description: 'One time payment for grant'
 			});
 
@@ -113,7 +118,7 @@ exports.grantCharge = async (grant, req, res, next) => {
 			grant
 		});
 	} catch (error) {
-		next(error);
+		throw error;
 	}
 };
 

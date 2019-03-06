@@ -1,14 +1,17 @@
 const db = require('../../config/db.config.js'),
 	errorMaker = require('../../helpers/error.maker');
 
+const stripe = require('./stripe.controller');
+
 const { Grant, Cause, Region, Organization, sequelize } = db;
 
 // Create a grant for certain donor
 exports.create = (req, res, next) => {
 	const donor_id = req.user.id;
-	const { name, amounts, monthly, causes, regions, organizations } = req.body;
+	const { name, monthly, causes, regions, organizations } = req.body;
 
-	const total_amount = 100;
+	var total_amount = organizations.map((org) => org.amount).reduce((partial_sum, a) => partial_sum + a);
+	var total_amount = total_amount * 100;
 
 	return sequelize
 		.transaction(function(t) {
@@ -39,12 +42,7 @@ exports.create = (req, res, next) => {
 		})
 		.then(function(grants) {
 			// transaction committed
-			// res.status(201).json({
-			// 	grant,
-			// 	message: 'Grant Created'
-			// });
-
-			next(grants.dataValues);
+			stripe.grantCharge({grant: grants.dataValues, total_amount}, req, res);
 			return null;
 		})
 		.catch(function(error) {
