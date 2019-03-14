@@ -4,7 +4,6 @@ module.exports = {
 	up: (queryInterface, Sequelize) => {
 		return queryInterface.bulkInsert('regions', [
 			{
-				id: 1,
 				name: 'North India',
 				created_at: new Date(),
 				updated_at: new Date()

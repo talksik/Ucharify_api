@@ -4,13 +4,11 @@ module.exports = {
 	up: (queryInterface, Sequelize) => {
 		return queryInterface.bulkInsert('causes', [
 			{
-				id: 1,
 				name: 'Animal Care',
 				created_at: new Date(),
 				updated_at: new Date()
 			},
 			{
-				id: 2,
 				name: 'Water',
 				created_at: new Date(),
 				updated_at: new Date()
@@ -19,6 +17,6 @@ module.exports = {
 	},
 
 	down: (queryInterface, Sequelize) => {
-		return queryInterface.bulkDelete('causes');
+		return queryInterface.bulkDelete('causes', [{ name: 'Water' }, { name: 'Animal Care' }]);
 	}
 };

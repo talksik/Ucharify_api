@@ -54,11 +54,8 @@ exports.create = async (req, res, next) => {
 		});
 
 		// cause or region not found
-		if (!causes.length) {
-			await Cause.create({ name: primary_cause }, { transaction });
-		}
-		if (!regions.length) {
-			await Region.create({ name: primary_region }, { transaction });
+		if (!causes.length || !regions.length) {
+			throw errorMaker(400, `No valid cause or region`);
 		}
 
 		const saltRounds = await bcrypt.genSaltSync(10);
