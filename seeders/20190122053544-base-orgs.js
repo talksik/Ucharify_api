@@ -27,7 +27,7 @@ module.exports = {
 				estimate_asset_value: 200000,
 				estimate_yearly_operating_cost: 40000,
 
-				isNonprofit: true,
+				is_nonprofit: true,
 
 				primary_contact_phone: '9493873423',
 				primary_contact_first_name: 'Kamlesh',
@@ -51,8 +51,8 @@ module.exports = {
 			// 	state: 'CA',
 			// 	zip: '92604',
 
-			// 	primary_cause: 'Animal',
-			// 	primary_region: 'South Asia',
+			// 	primary_cause: 'Human Services',
+			// 	primary_region: 'Africa',
 
 			// 	ein: '63-6088665',
 			// 	estimate_asset_value: 200000,

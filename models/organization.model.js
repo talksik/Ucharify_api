@@ -79,12 +79,12 @@ module.exports = (sequelize, DataTypes) => {
 			defaultValue: 0
 		},
 
-		isNonprofit: {
+		is_nonprofit: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
 			defaultValue: false
 		},
-		isVerified: {
+		is_verified: {
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
 			defaultValue: false

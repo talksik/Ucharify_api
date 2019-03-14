@@ -26,15 +26,15 @@ exports.create = async (req, res, next) => {
 		estimate_asset_value,
 		estimate_yearly_operating_cost,
 
-		isNonprofit,
+		is_nonprofit,
 
 		primary_contact_phone,
 		primary_contact_first_name,
 		primary_contact_last_name
 	} = req.body;
 
-	primary_cause = primary_cause.trim().toLowerCase();
-	primary_region = primary_region.trim().toLowerCase();
+	// primary_cause = primary_cause.trim().toLowerCase();
+	// primary_region = primary_region.trim().toLowerCase();
 
 	let transaction;
 
@@ -93,7 +93,7 @@ exports.create = async (req, res, next) => {
 			estimate_asset_value,
 			estimate_yearly_operating_cost,
 
-			isNonprofit,
+			is_nonprofit,
 
 			primary_contact_phone,
 			primary_contact_first_name,
