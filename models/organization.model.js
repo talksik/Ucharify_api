@@ -1,4 +1,6 @@
-const uuidv4 = require('uuid/v4');
+const uuidv4 = require('uuid/v4'),
+	Cause = require('./cause.model'),
+	Region = require('./region.model');
 
 module.exports = (sequelize, DataTypes) => {
 	const Organization = sequelize.define('organizations', {
@@ -45,21 +47,35 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false
 		},
 
-		primary_cause: { type: DataTypes.STRING, allowNull: false },
-		primary_region: { type: DataTypes.STRING, allowNull: false },
+		primary_cause: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			references: {
+				model: Cause(sequelize, DataTypes),
+				key: 'name'
+			}
+		},
+		primary_region: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			references: {
+				model: Region(sequelize, DataTypes),
+				key: 'name'
+			}
+		},
 
 		total_rating: { type: DataTypes.INTEGER, defaultValue: 0 },
 
 		ein: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.STRING(10),
 			allowNull: false
 		},
-		estimate_assets: {
+		estimate_asset_value: {
 			type: DataTypes.BIGINT,
 			defaultValue: 0
 		},
 		estimate_year_operating_cost: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.BIGINT,
 			defaultValue: 0
 		},
 

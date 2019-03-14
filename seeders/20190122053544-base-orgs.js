@@ -18,13 +18,13 @@ module.exports = {
 				zip: '92604',
 
 				primary_cause: 'Animal',
-				primary_region: '',
+				primary_region: 'North India',
 
-				ein,
-				estimate_assets,
-				estimate_year_operating_cost,
+				ein: '63-6088665',
+				estimate_asset_value: 200000,
+				estimate_yearly_operating_cost: 40000,
 
-				isNonprofit,
+				isNonprofit: true,
 
 				primary_contact_phone,
 				primary_contact_first_name,
