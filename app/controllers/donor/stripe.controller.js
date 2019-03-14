@@ -1,7 +1,7 @@
 const db = require('../../config/db.config.js'),
 	errorMaker = require('../../helpers/error.maker');
 
-const stripe = require('stripe')('sk_test_n8NCvCFjD1xFhGiEq6SI8CXj');
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 const { Donor, Charge, PaymentPlan } = db;
 
@@ -43,7 +43,7 @@ exports.grantCharge = async (data, req, res) => {
 				description: 'One time payment for grant',
 				statement_descriptor: 'one-time-grant'
 			});
-			
+
 			let transfers = await organizations.map(async (org) => {
 				org.amount = org.amount * 100;
 				const applicationStripeFee = org.amount * 0.05;
