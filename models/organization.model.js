@@ -1,22 +1,28 @@
+const uuidv4 = require('uuid/v4');
+
 module.exports = (sequelize, DataTypes) => {
 	const Organization = sequelize.define('organizations', {
 		id: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.UUID,
 			primaryKey: true,
-			autoIncrement: true
+			defaultValue: uuidv4()
 		},
 		name: { type: DataTypes.STRING, allowNull: false },
-		email: {
+		short_description: { type: DataTypes.STRING, allowNull: false },
+
+		primary_contact_email: {
 			type: DataTypes.STRING,
 			validate: {
 				isEmail: true
 			},
-			allowNull: false
+			allowNull: false,
+			unique: true
 		},
-		phone: {
+		password: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
+
 		address: {
 			type: DataTypes.STRING,
 			allowNull: false
@@ -25,29 +31,27 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
+		state: {
+			type: DataTypes.STRING(5),
+			allowNull: false
+		},
 		country: {
 			type: DataTypes.STRING,
+			defaultValue: 'USA',
 			allowNull: false
 		},
 		zip: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING(10),
 			allowNull: false
 		},
-		password: {
-			type: DataTypes.STRING,
-			allowNull: false
-		},
-		verified: {
-			type: DataTypes.BOOLEAN,
-			allowNull: false,
-			defaultValue: false
-		},
-		short_description: DataTypes.STRING,
+
 		primary_cause: { type: DataTypes.STRING, allowNull: false },
 		primary_region: { type: DataTypes.STRING, allowNull: false },
-		rating: { type: DataTypes.INTEGER, defaultValue: 0, allowNull: false },
+
+		total_rating: { type: DataTypes.INTEGER, defaultValue: 0 },
+
 		ein: {
-			type: DataTypes.STRING,
+			type: DataTypes.INTEGER,
 			allowNull: false
 		},
 		estimate_assets: {
@@ -57,6 +61,22 @@ module.exports = (sequelize, DataTypes) => {
 		estimate_year_operating_cost: {
 			type: DataTypes.INTEGER,
 			defaultValue: 0
+		},
+
+		isNonprofit: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false
+		},
+		isVerified: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false
+		},
+
+		primary_contact_phone: {
+			type: DataTypes.STRING(20),
+			allowNull: false
 		},
 		primary_contact_first_name: {
 			type: DataTypes.STRING,

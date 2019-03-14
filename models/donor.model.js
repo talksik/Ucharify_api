@@ -1,9 +1,11 @@
+const uuidv4 = require('uuid/v4');
+
 module.exports = (sequelize, DataTypes) => {
 	const Donor = sequelize.define('donors', {
 		id: {
-			type: DataTypes.INTEGER,
+			type: DataTypes.UUID,
 			primaryKey: true,
-			autoIncrement: true
+			defaultValue: uuidv4()
 		},
 		stripe_id: {
 			type: DataTypes.UUID,
@@ -28,17 +30,20 @@ module.exports = (sequelize, DataTypes) => {
 			validate: {
 				isEmail: true
 			},
-			allowNull: false
+			allowNull: false,
+			unique: true
 		},
 		password: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
 		age: DataTypes.INTEGER,
-		phone: DataTypes.BIGINT,
+		phone: DataTypes.DataTypes.STRING(20),
+
 		address: DataTypes.STRING,
 		city: DataTypes.STRING,
 		state: DataTypes.STRING,
+		zip: DataTypes.STRING(10),
 		country: DataTypes.STRING
 	});
 	return Donor;

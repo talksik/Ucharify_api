@@ -8,21 +8,29 @@ const { Grant, Cause, Region, Organization } = db;
 exports.create = async (req, res, next) => {
 	let {
 		name,
-		email,
-		password,
 		short_description,
-		primary_cause,
-		primary_region,
-		ein,
-		primary_contact_first_name,
-		primary_contact_last_name,
-		phone,
-		country,
+
+		primary_contact_email,
+		password,
+
 		address,
 		city,
+		state,
+		country,
 		zip,
+
+		primary_cause,
+		primary_region,
+
+		ein,
 		estimate_assets,
-		estimate_year_operating_cost
+		estimate_year_operating_cost,
+
+		isNonprofit,
+
+		primary_contact_phone,
+		primary_contact_first_name,
+		primary_contact_last_name
 	} = req.body;
 
 	primary_cause = primary_cause.trim().toLowerCase();
@@ -33,10 +41,12 @@ exports.create = async (req, res, next) => {
 	try {
 		transaction = await db.sequelize.transaction();
 
-		const orgs = await Organization.findAll({ where: { email } });
+		const orgs = await Organization.findAll({
+			where: { primary_contact_email }
+		});
 
 		if (orgs.length >= 1) {
-			return next(errorMaker(409, `Email Exists: ${email}`));
+			return next(errorMaker(409, `Email Exists: ${primary_contact_email}`));
 		}
 
 		const CAUSE_QUERY = `SELECT name FROM causes
@@ -59,27 +69,35 @@ exports.create = async (req, res, next) => {
 		}
 
 		const saltRounds = await bcrypt.genSaltSync(10);
-		// hash with salt rounds 
+		// hash with salt rounds
 		const hashedPass = await bcrypt.hashSync(password, saltRounds);
 
 		// Store hash in DB
 		const org = await Organization.create({
 			name,
-			email,
-			password: hashedPass, //hashed password
 			short_description,
-			primary_cause,
-			primary_region,
-			ein,
-			primary_contact_first_name,
-			primary_contact_last_name,
-			phone,
-			country,
+
+			primary_contact_email,
+			password: hashedPass,
+
 			address,
 			city,
+			state,
+			country,
 			zip,
+
+			primary_cause,
+			primary_region,
+
+			ein,
 			estimate_assets,
-			estimate_year_operating_cost
+			estimate_year_operating_cost,
+
+			isNonprofit,
+
+			primary_contact_phone,
+			primary_contact_first_name,
+			primary_contact_last_name
 		});
 
 		await transaction.commit();

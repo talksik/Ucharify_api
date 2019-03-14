@@ -5,22 +5,30 @@ module.exports = {
 		return queryInterface.bulkInsert('organizations', [
 			{
 				name: 'Gopala Goshala',
-				email: 'kcp1982@yahoo.com',
-				password: hashedPass, //hashed password
 				short_description:
 					'We are focused on bringing lawful animal treatment in North India. Check out our many projects such as city water fountains for animals',
+
+				primary_contact_email: 'kcp1982@yahoo.com',
+				password: hashedPass,
+
+				address: '14872 Waverly Lane',
+				city: 'Irvine',
+				country: 'USA',
+				state: 'CA',
+				zip: '92604',
+
 				primary_cause: 'Animal',
-				primary_region,
+				primary_region: '',
+
 				ein,
-				primary_contact_first_name,
-				primary_contact_last_name,
-				phone,
-				country,
-				address,
-				city,
-				zip,
 				estimate_assets,
-				estimate_year_operating_cost
+				estimate_year_operating_cost,
+
+				isNonprofit,
+
+				primary_contact_phone,
+				primary_contact_first_name,
+				primary_contact_last_name
 			},
 			{
 				name,
