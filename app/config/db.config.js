@@ -7,7 +7,6 @@ const Sequelize = require('sequelize'),
 	UserModel = require('../../models/user.model.js'),
 	PaymentPlanModel = require('../../models/paymentplan.model'),
 	ChargeModel = require('../../models/charge.model'),
-	OrgBankModel = require('../../models/orgBank.model'),
 	GrantsOrganizationsModel = require('../../models/grantsOrganizations.model'),
 	associate = require('./associate');
 
@@ -46,7 +45,6 @@ const Organization = OrganizationModel(sequelize, Sequelize);
 const User = UserModel(sequelize, Sequelize);
 const Charge = ChargeModel(sequelize, Sequelize);
 const PaymentPlan = PaymentPlanModel(sequelize, Sequelize);
-const OrgBank = OrgBankModel(sequelize, Sequelize);
 const GrantsOrganizations = GrantsOrganizationsModel(sequelize, Sequelize);
 db.Donor = Donor;
 db.Grant = Grant;
@@ -56,7 +54,6 @@ db.Organization = Organization;
 db.User = User;
 db.Charge = Charge;
 db.PaymentPlan = PaymentPlan;
-db.OrgBank = OrgBank;
 db.GrantsOrganizations = GrantsOrganizations;
 
 // make associations with created models

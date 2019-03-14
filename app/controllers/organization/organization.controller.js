@@ -15,16 +15,16 @@ exports.create = async (req, res, next) => {
 
 		address,
 		city,
-		state,
 		country,
+		state,
 		zip,
 
 		primary_cause,
 		primary_region,
 
 		ein,
-		estimate_assets,
-		estimate_year_operating_cost,
+		estimate_asset_value,
+		estimate_yearly_operating_cost,
 
 		isNonprofit,
 
@@ -82,16 +82,16 @@ exports.create = async (req, res, next) => {
 
 			address,
 			city,
-			state,
 			country,
+			state,
 			zip,
 
 			primary_cause,
 			primary_region,
 
 			ein,
-			estimate_assets,
-			estimate_year_operating_cost,
+			estimate_asset_value,
+			estimate_yearly_operating_cost,
 
 			isNonprofit,
 

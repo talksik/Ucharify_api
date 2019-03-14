@@ -30,7 +30,9 @@ app.use((req, res, next) => {
 db.sequelize
 	.authenticate()
 	.then(() => {
-		console.log('Connection has been established successfully: ' + process.env.NODE_ENV);
+		console.log(
+			'Connection has been established successfully: ' + process.env.NODE_ENV
+		);
 	})
 	.catch(err => {
 		console.error('Unable to connect to the database:', err);
@@ -38,9 +40,18 @@ db.sequelize
 
 //force: true will drop the table if it already exists
 const drop_tables = process.env.DROP_TABLES || false;
-db.sequelize.sync({ force: drop_tables }).then(() => {
-	console.log(`Drop and Resync with { force: ${drop_tables} }`);
-});
+if (drop_tables) {
+	db.sequelize
+		.query('SET FOREIGN_KEY_CHECKS = 0', null, { raw: true })
+		.then(function() {
+			db.sequelize.sync({ force: true }).then(function() {
+				console.log('Dropped all of the tables');
+			});
+		});
+} else
+	db.sequelize.sync({ force: false }).then(() => {
+		console.log(`Drop and Resync with { force: ${drop_tables} }`);
+	});
 
 //main route for api; perhaps for api docs frontend
 app.get('/', function(req, res, next) {
@@ -87,7 +98,7 @@ app.use((error, req, res, next) => {
 var server = app.listen(port, function() {
 	var host = server.address();
 	var port = server.address().port;
-	
+
 	//server is successful
 	console.log(`App listening at port: ${port}`);
 });

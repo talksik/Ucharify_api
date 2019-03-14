@@ -74,7 +74,7 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.BIGINT,
 			defaultValue: 0
 		},
-		estimate_year_operating_cost: {
+		estimate_yearly_operating_cost: {
 			type: DataTypes.BIGINT,
 			defaultValue: 0
 		},

@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt-nodejs');
 // DOESNT WORK AS NEED TO HASH PASSWORD TO DB
 module.exports = {
 	up: async (queryInterface, Sequelize) => {
-
 		var hash = bcrypt.hashSync('test', null);
 
 		return queryInterface.bulkInsert('donors', [
@@ -27,7 +26,7 @@ module.exports = {
 
 	down: (queryInterface, Sequelize) => {
 		return queryInterface.bulkDelete('donors', {
-			email: 'patel.arjun50@gmail.com'
+			email: 'patelarjun50@gmail.com'
 		});
 	}
 };

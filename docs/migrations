@@ -1,0 +1,18 @@
+Insert seed data:
+- 3 orgs (password: test)
+- 1 donor (password: test)
+- basic causes
+- basic regions
+- 1 charity bundle
+
+`npx sequelize db:seed:all`
+
+
+Revert seed data insert: 
+
+`npx sequelize db:seed:undo:all`
+
+
+Drop all tables:
+
+`npm run drop:local:{operating_system}` where `operating_system` is `mac` or `windows`
