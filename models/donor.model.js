@@ -1,11 +1,9 @@
-const uuidv4 = require('uuid/v4');
-
 module.exports = (sequelize, DataTypes) => {
 	const Donor = sequelize.define('donors', {
 		id: {
 			type: DataTypes.UUID,
-			primaryKey: true,
-			defaultValue: uuidv4()
+			allowNull: false,
+			primaryKey: true
 		},
 		stripe_id: {
 			type: DataTypes.UUID,

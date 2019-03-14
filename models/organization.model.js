@@ -1,13 +1,12 @@
-const uuidv4 = require('uuid/v4'),
-	Cause = require('./cause.model'),
+const Cause = require('./cause.model'),
 	Region = require('./region.model');
 
 module.exports = (sequelize, DataTypes) => {
 	const Organization = sequelize.define('organizations', {
 		id: {
 			type: DataTypes.UUID,
-			primaryKey: true,
-			defaultValue: uuidv4()
+			allowNull: false,
+			primaryKey: true
 		},
 		name: { type: DataTypes.STRING, allowNull: false },
 		short_description: { type: DataTypes.STRING, allowNull: false },

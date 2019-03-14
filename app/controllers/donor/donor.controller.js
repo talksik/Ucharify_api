@@ -1,6 +1,7 @@
 const db = require('../../config/db.config.js'),
 	bcrypt = require('bcrypt-nodejs'),
-	errorMaker = require('../../helpers/error.maker');
+	errorMaker = require('../../helpers/error.maker'),
+	uuidv4 = require('uuid/v4');
 
 const Donor = db.Donor;
 
@@ -23,6 +24,7 @@ exports.create = (req, res, next) => {
 						return next(error);
 					} else {
 						Donor.create({
+							id: uuidv4(),
 							first_name: req.body.first_name,
 							middle_name: req.body.middle_name,
 							last_name: req.body.last_name,

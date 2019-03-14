@@ -1,5 +1,6 @@
 'use strict';
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt-nodejs'),
+	uuidv4 = require('uuid/v4');
 
 // DOESNT WORK AS NEED TO HASH PASSWORD TO DB
 module.exports = {
@@ -8,6 +9,7 @@ module.exports = {
 
 		return queryInterface.bulkInsert('donors', [
 			{
+				id: uuidv4(),
 				first_name: 'Arjun',
 				last_name: 'Patel',
 				email: 'patelarjun50@gmail.com',

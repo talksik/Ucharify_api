@@ -1,6 +1,7 @@
 const db = require('../../config/db.config.js'),
 	bcrypt = require('bcrypt-nodejs'),
-	errorMaker = require('../../helpers/error.maker');
+	errorMaker = require('../../helpers/error.maker'),
+	uuidv4 = require('uuid/v4');
 
 const { Grant, Cause, Region, Organization } = db;
 
@@ -74,6 +75,7 @@ exports.create = async (req, res, next) => {
 
 		// Store hash in DB
 		const org = await Organization.create({
+			id: uuidv4(),
 			name,
 			short_description,
 
@@ -107,6 +109,7 @@ exports.create = async (req, res, next) => {
 			org
 		});
 	} catch (error) {
+		console.log(error);
 		await transaction.rollback();
 		next(error);
 	}
