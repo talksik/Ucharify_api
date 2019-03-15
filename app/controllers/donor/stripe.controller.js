@@ -7,8 +7,8 @@ const { Donor, Charge, PaymentPlan } = db;
 
 // Subscribe user to plan or one time charge
 exports.grantCharge = async (data, req, res) => {
-	const { stripeToken, organizations, monthly } = req.body;
-	const { total_amount, grant } = await data; // passed from grant controller
+	const { stripeToken, organizations, monthly, amount } = req.body;
+	const { grant } = await data; // passed from grant controller
 	const grant_id = await grant.id;
 
 	const user = req.user;
@@ -34,84 +34,35 @@ exports.grantCharge = async (data, req, res) => {
 
 		var result;
 
-		// charge if not monthly, plan if it is
-		if (!monthly) {
-			let charge = await stripe.charges.create({
-				amount: total_amount,
+		// charge if yes or no monthly
+		let charge = await stripe.charges.create({
+			amount,
+			currency: 'usd',
+			source: 'tok_visa',
+			description: 'One time payment for grant',
+			statement_descriptor: 'one-time-grant'
+		});
+
+		let transfers = await organizations.map(async org => {
+			org.amount = org.amount * 100;
+			const applicationStripeFee = org.amount * 0.05;
+
+			let t = await stripe.transfers.create({
+				amount: org.amount - applicationStripeFee,
 				currency: 'usd',
-				source: 'tok_visa',
-				description: 'One time payment for grant',
-				statement_descriptor: 'one-time-grant'
+				source_transaction: charge.id,
+				destination: 'acct_1EAxzUIVW1uo07uH'
 			});
+			return t;
+		});
 
-			let transfers = await organizations.map(async (org) => {
-				org.amount = org.amount * 100;
-				const applicationStripeFee = org.amount * 0.05;
+		await Charge.create({
+			id: charge.id,
+			amount,
+			description: 'One time payment for grant'
+		});
 
-				let t = await stripe.transfers.create({
-					amount: org.amount - applicationStripeFee,
-					currency: 'usd',
-					source_transaction: charge.id,
-					destination: 'acct_1EAxzUIVW1uo07uH'
-				});
-				return t;
-			});
-
-			await Charge.create({
-				id: charge.id,
-				amount: total_amount,
-				description: 'One time payment for grant'
-			});
-
-			result = charge;
-		} else {
-			const plan = await stripe.plans.create({
-				nickname: `Plan for grant: ${grant_id}`,
-				product: product_id,
-				currency: 'usd',
-				interval: 'month',
-				amount
-			});
-
-			// either create new sub with new plan, or append plan to existing sub
-			if (!subscription_id) {
-				const currDate = new Date();
-				const unixFirstNextMonth = Math.round(
-					new Date(
-						currDate.getFullYear(),
-						currDate.getMonth() + 1,
-						1
-					).getTime() / 1000
-				);
-
-				let subscription = await stripe.subscriptions.create({
-					customer: stripe_id,
-					items: [{ plan: default_plan_id }],
-					billing_cycle_anchor: unixFirstNextMonth,
-					trial_end: unixFirstNextMonth
-				});
-
-				subscription_id = subscription.id;
-
-				await Donor.update(
-					{ subscription_id: subscription.id },
-					{ where: { id: user.id } }
-				);
-			}
-
-			const sub_item = await stripe.subscriptionItems.create({
-				subscription: subscription_id,
-				plan: plan.id
-			});
-
-			result = await PaymentPlan.create({
-				plan_id: plan.id,
-				amount,
-				grant_id,
-				subscription_id,
-				sub_item_id: sub_item.id
-			});
-		}
+		result = charge;
 
 		return res.status(200).json({
 			message: 'Successfully charged or subscribed',

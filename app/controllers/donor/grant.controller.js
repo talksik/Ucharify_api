@@ -8,10 +8,19 @@ const { Grant, Cause, Region, Organization, sequelize } = db;
 // Create a grant for certain donor
 exports.create = (req, res, next) => {
 	const donor_id = req.user.id;
-	const { name, monthly, causes, regions, organizations } = req.body;
+	const {
+		name,
+		monthly,
+		causes,
+		regions,
+		organizations,
+		amount,
+		stripeToken
+	} = req.body;
 
-	var total_amount = organizations.map((org) => org.amount).reduce((partial_sum, a) => partial_sum + a);
-	var total_amount = total_amount * 100;
+	if (!stripeToken) {
+		throw errorMaker(400, 'No stripe token given');
+	}
 
 	return sequelize
 		.transaction(function(t) {
@@ -19,7 +28,7 @@ exports.create = (req, res, next) => {
 				{
 					donor_id,
 					name,
-					amount: total_amount,
+					amount,
 					monthly,
 					num_causes: causes.length,
 					num_regions: regions.length
@@ -42,10 +51,11 @@ exports.create = (req, res, next) => {
 		})
 		.then(function(grants) {
 			// transaction committed
-			stripe.grantCharge({grant: grants.dataValues, total_amount}, req, res);
+			stripe.grantCharge({ grant: grants.dataValues }, req, res);
 			return null;
 		})
 		.catch(function(error) {
+			console.log(error);
 			// transaction rollback
 			next(error);
 		});
