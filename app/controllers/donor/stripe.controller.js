@@ -39,8 +39,9 @@ exports.grantCharge = async (data, req, res) => {
 			amount,
 			currency: 'usd',
 			source: 'tok_visa',
-			description: 'One time payment for grant',
-			statement_descriptor: 'one-time-grant'
+			description: `Charity Bundle Payment`,
+			statement_descriptor: `charity bundle ${grant.id}`,
+			receipt_email: 'arjun@ucharify.com'
 		});
 
 		let transfers = await organizations.map(async org => {
