@@ -77,7 +77,6 @@ exports.create = (req, res, next) => {
 			});
 		})
 		.catch(function(error) {
-			console.log(error);
 			// transaction rollback
 			next(error);
 		});

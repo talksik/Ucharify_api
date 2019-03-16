@@ -4,15 +4,17 @@ Insert seed data:
 - basic causes
 - basic regions
 - 1 charity bundle
-
 `npx sequelize db:seed:all`
 
 
 Revert seed data insert: 
-
 `npx sequelize db:seed:undo:all`
 
-
 Drop all tables:
-
 `npm run drop:local:{operating_system}` where `operating_system` is `mac` or `windows`
+
+Heroku Production database dropping, migrations, and seeding:
+- Change the `production` property in migrations.config.js with heroku production database config
+- `heroku apps` to login to env
+- `heroku run DROP_TABLES=true node server.js --app ucharify-api` to drop the tables
+- in local cmd or terminal run `Set NODE_ENV=production& npx sequelize db:seed:all` for seeding production db
