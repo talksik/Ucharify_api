@@ -34,7 +34,7 @@ exports.grantCharge = async ({
 		});
 
 		let transfers = await organizations.map(async org => {
-			let stripeOrgAmount = Math.round(org.amount * 100 * 100) / 100;
+			let stripeOrgAmount = Math.round(org.amount * 100);
 			const applicationStripeFee = stripeOrgAmount * 0.05;
 
 			let t = await stripe.transfers.create({

@@ -20,7 +20,7 @@ exports.create = (req, res, next) => {
 		stripeToken
 	} = req.body;
 
-	amount = Math.round(amount * 100) / 100;
+	actual_total = Math.round(amount * 100) / 100;
 
 	if (!stripeToken) {
 		throw errorMaker(400, 'No stripe token given');
@@ -32,7 +32,7 @@ exports.create = (req, res, next) => {
 				{
 					donor_id: user.id,
 					name,
-					amount,
+					amount: actual_total,
 					monthly,
 					num_causes: causes.length,
 					num_regions: regions.length
@@ -67,7 +67,7 @@ exports.create = (req, res, next) => {
 
 			sendgrid.paymentReceipt({
 				organizations,
-				total_amount: amount,
+				total_amount: actual_total,
 				receiver: user.email
 			});
 
