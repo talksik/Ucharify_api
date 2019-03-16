@@ -21,9 +21,11 @@ exports.grantCharge = async ({
 
 		var result;
 
+		const stripeAmount = amount * 100;
+
 		// charge if yes or no monthly
 		let charge = await stripe.charges.create({
-			amount,
+			amount: stripeAmount,
 			currency: 'usd',
 			source: 'tok_visa',
 			description: `Charity Bundle Payment`,
@@ -32,11 +34,11 @@ exports.grantCharge = async ({
 		});
 
 		let transfers = await organizations.map(async org => {
-			org.amount = org.amount * 100;
-			const applicationStripeFee = org.amount * 0.05;
+			let stripeOrgAmount = Math.round(org.amount * 100 * 100) / 100;
+			const applicationStripeFee = stripeOrgAmount * 0.05;
 
 			let t = await stripe.transfers.create({
-				amount: org.amount - applicationStripeFee,
+				amount: stripeOrgAmount - applicationStripeFee,
 				currency: 'usd',
 				source_transaction: charge.id,
 				destination: 'acct_1EAxzUIVW1uo07uH'

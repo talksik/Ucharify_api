@@ -10,7 +10,7 @@ const { Grant, Cause, Region, Organization, sequelize } = db;
 exports.create = (req, res, next) => {
 	const user = req.user;
 
-	const {
+	var {
 		name,
 		monthly,
 		causes,
@@ -19,6 +19,8 @@ exports.create = (req, res, next) => {
 		amount,
 		stripeToken
 	} = req.body;
+
+	amount = Math.round(amount * 100) / 100;
 
 	if (!stripeToken) {
 		throw errorMaker(400, 'No stripe token given');
@@ -56,7 +58,6 @@ exports.create = (req, res, next) => {
 			stripe.grantCharge({
 				grant: grants.dataValues,
 				stripeToken,
-				grant,
 				stripeToken,
 				organizations,
 				monthly,
@@ -66,13 +67,13 @@ exports.create = (req, res, next) => {
 
 			sendgrid.paymentReceipt({
 				organizations,
-				total_amount,
+				total_amount: amount,
 				receiver: user.email
 			});
 
 			return res.status(200).json({
 				message: 'Successfully charged or subscribed',
-				grant
+				grant: grants.dataValues
 			});
 		})
 		.catch(function(error) {

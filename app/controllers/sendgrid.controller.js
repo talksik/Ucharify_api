@@ -36,10 +36,6 @@ exports.paymentReceipt = async ({ organizations, total_amount, receiver }) => {
 			}
 		};
 		const sentRes = await sgMail.send(msg);
-
-		return res.status(200).json({
-			message: 'Email sent'
-		});
 	} catch (error) {
 		throw error;
 	}
