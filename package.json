@@ -23,6 +23,7 @@
 	},
 	"homepage": "https://github.com/talksik/Ucharify_api#readme",
 	"dependencies": {
+		"@sendgrid/mail": "^6.3.1",
 		"bcrypt-nodejs": "0.0.3",
 		"body-parser": "^1.18.3",
 		"express": "^4.16.4",
