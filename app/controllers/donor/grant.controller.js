@@ -2,12 +2,14 @@ const db = require('../../config/db.config.js'),
 	errorMaker = require('../../helpers/error.maker');
 
 const stripe = require('./stripe.controller');
+const sendgrid = require('../sendgrid.controller');
 
 const { Grant, Cause, Region, Organization, sequelize } = db;
 
 // Create a grant for certain donor
 exports.create = (req, res, next) => {
-	const donor_id = req.user.id;
+	const user = req.user;
+
 	const {
 		name,
 		monthly,
@@ -26,7 +28,7 @@ exports.create = (req, res, next) => {
 		.transaction(function(t) {
 			return Grant.create(
 				{
-					donor_id,
+					donor_id: user.id,
 					name,
 					amount,
 					monthly,
@@ -51,8 +53,27 @@ exports.create = (req, res, next) => {
 		})
 		.then(function(grants) {
 			// transaction committed
-			stripe.grantCharge({ grant: grants.dataValues }, req, res);
-			return null;
+			stripe.grantCharge({
+				grant: grants.dataValues,
+				stripeToken,
+				grant,
+				stripeToken,
+				organizations,
+				monthly,
+				amount,
+				user
+			});
+
+			sendgrid.paymentReceipt({
+				organizations,
+				total_amount,
+				receiver: user.email
+			});
+
+			return res.status(200).json({
+				message: 'Successfully charged or subscribed',
+				grant
+			});
 		})
 		.catch(function(error) {
 			console.log(error);

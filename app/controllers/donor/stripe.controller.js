@@ -6,31 +6,18 @@ const stripe = require('stripe')(process.env.STRIPE_KEY);
 const { Donor, Charge, PaymentPlan } = db;
 
 // Subscribe user to plan or one time charge
-exports.grantCharge = async (data, req, res) => {
-	const { stripeToken, organizations, monthly, amount } = req.body;
-	const { grant } = await data; // passed from grant controller
+exports.grantCharge = async ({
+	grant,
+	stripeToken,
+	organizations,
+	monthly,
+	amount,
+	user
+}) => {
 	const grant_id = await grant.id;
-
-	const user = req.user;
-	const product_id = 'prod_ER3jOog6QMX1GP',
-		default_plan_id = 'default_plan'; // main Grants product
 
 	try {
 		const donors = await Donor.findAll({ where: { id: user.id } });
-
-		// check if already a stripe customer
-		let { stripe_id, subscription_id } = donors[0];
-
-		// if (!stripe_id) {
-		// 	const customer = await stripe.customers.create({
-		// 		source: stripeToken,
-		// 		email: user.email
-		// 	});
-		// 	stripe_id = await customer.id;
-
-		// 	await Donor.update({ stripe_id }, { where: { id: user.id } });
-		// }
-		// TODO: if there is, then update with the given source
 
 		var result;
 
@@ -65,10 +52,7 @@ exports.grantCharge = async (data, req, res) => {
 
 		result = charge;
 
-		return res.status(200).json({
-			message: 'Successfully charged or subscribed',
-			grant
-		});
+		return null;
 	} catch (error) {
 		throw error;
 	}
