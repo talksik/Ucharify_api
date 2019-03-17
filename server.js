@@ -3,8 +3,10 @@ const express = require('express'),
 	app = express(),
 	bodyParser = require('body-parser'),
 	port = process.env.PORT,
-	db = require('./app/config/db.config.js'),
+	db = require('./models'),
 	morgan = require('morgan');
+
+console.log(db);
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());

@@ -10,6 +10,14 @@ module.exports = (sequelize, DataTypes) => {
 		},
 		name: { type: DataTypes.STRING, allowNull: false },
 		short_description: { type: DataTypes.STRING, allowNull: false },
+		total_received: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0
+		},
+		total_donors: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0
+		},
 
 		primary_contact_email: {
 			type: DataTypes.STRING,
