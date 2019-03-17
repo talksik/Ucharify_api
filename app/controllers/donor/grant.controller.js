@@ -4,21 +4,16 @@ const db = require('../../../models'),
 const stripe = require('./stripe.controller');
 const sendgrid = require('../sendgrid.controller');
 
-const { Grant, Cause, Region, Organization, sequelize } = db;
-
+const { Grant, Cause, Region, Organization, GrantOrganization, sequelize } = db;
+console.log(db);
 // Create a grant for certain donor
-exports.create = (req, res, next) => {
+exports.create = async (req, res, next) => {
 	const user = req.user;
 
-	var {
-		name,
-		monthly,
-		causes,
-		regions,
-		organizations,
-		amount,
-		stripeToken
-	} = req.body;
+	var { name, monthly, organizations, amount, stripeToken } = req.body;
+
+	const causes = organizations.map(org => org.primary_cause);
+	const regions = organizations.map(org => org.primary_region);
 
 	actual_total = Math.round(amount * 100) / 100;
 
@@ -26,60 +21,65 @@ exports.create = (req, res, next) => {
 		throw errorMaker(400, 'No stripe token given');
 	}
 
-	return sequelize
-		.transaction(function(t) {
-			return Grant.create(
-				{
-					donor_id: user.id,
-					name,
-					amount: actual_total,
-					monthly,
-					num_causes: causes.length,
-					num_regions: regions.length
-				},
-				{
-					transaction: t
-				}
-			).then(grant => {
-				return Promise.all([
-					grant.addCauses(causes, { transaction: t }),
-					grant.addRegions(regions, { transaction: t }),
-					organizations.map(org => {
-						grant.addOrganization(org.id, {
-							through: { amount: org.amount },
-							transaction: t
-						});
-					})
-				]).then(result => grant);
-			});
-		})
-		.then(function(grants) {
-			// transaction committed
-			stripe.grantCharge({
-				grant: grants.dataValues,
-				stripeToken,
-				stripeToken,
-				organizations,
+	let transaction;
+
+	try {
+		// get transaction
+		transaction = await sequelize.transaction();
+
+		const grant = await Grant.create(
+			{
+				donor_id: user.id,
+				name,
+				amount: actual_total,
 				monthly,
-				amount,
-				user
-			});
+				num_causes: causes.length,
+				num_regions: regions.length
+			},
+			{
+				transaction
+			}
+		);
 
-			sendgrid.paymentReceipt({
-				organizations,
-				total_amount: actual_total,
-				receiver: user.email
-			});
-
-			return res.status(200).json({
-				message: 'Successfully charged or subscribed',
-				grant: grants.dataValues
-			});
-		})
-		.catch(function(error) {
-			// transaction rollback
-			next(error);
+		const grantsOrgs = organizations.map(org => {
+			return {
+				grant_id: grant.id,
+				organization_id: org.id,
+				amount: org.amount
+			};
 		});
+
+		await GrantOrganization.bulkCreate(grantsOrgs, {
+			transaction
+		});
+
+		await stripe.grantCharge({
+			grant,
+			stripeToken,
+			stripeToken,
+			organizations,
+			monthly,
+			amount,
+			user
+		});
+
+		await sendgrid.paymentReceipt({
+			organizations,
+			total_amount: actual_total,
+			receiver: user.email
+		});
+
+		// commit
+		await transaction.commit();
+
+		return res.status(200).json({
+			message: 'Successfully charged or subscribed',
+			grant
+		});
+	} catch (error) {
+		if (error) await transaction.rollback();
+		next(error);
+	}
 };
 
 // Find grants with causes, regions, and organizations by donor_id

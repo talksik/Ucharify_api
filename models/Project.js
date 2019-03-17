@@ -51,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
 			}
 		},
 		number_people_impacted: {
-			type: DataTypes.STRING,
+			type: DataTypes.INTEGER,
 			defaultValue: 0
 		}
 	});

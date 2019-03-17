@@ -1,3 +1,5 @@
+const Donor = require('./Donor');
+
 module.exports = (sequelize, DataTypes) => {
 	const Grant = sequelize.define('Grant', {
 		id: {
@@ -25,16 +27,19 @@ module.exports = (sequelize, DataTypes) => {
 		num_regions: {
 			type: DataTypes.INTEGER,
 			allowNull: false
+		},
+
+		donor_id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			references: {
+				model: Donor(sequelize, DataTypes),
+				key: 'id'
+			}
 		}
 	});
 
 	Grant.associate = models => {
-		Grant.belongsToMany(models.Organization, {
-			through: 'grants_organizations',
-			foreignKey: 'grant_id',
-			otherKey: 'organization_id'
-		});
-
 		Grant.hasMany(models.Charge, { foreignKey: 'grant_id' });
 	};
 

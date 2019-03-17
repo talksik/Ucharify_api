@@ -45,11 +45,5 @@ module.exports = (sequelize, DataTypes) => {
 		country: DataTypes.STRING
 	});
 
-	Donor.associate = models => {
-		Donor.hasMany(models.Grant, {
-			foreignKey: 'donor_id'
-		});
-	};
-
 	return Donor;
 };

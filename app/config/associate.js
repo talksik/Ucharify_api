@@ -15,7 +15,7 @@ module.exports = models => {
 	donor.hasMany(Grant, { foreignKey: 'donor_id' });
 
 	Grant.belongsToMany(Organization, {
-		through: 'grants_organizations',
+		through: 'Grant_Organization',
 		foreignKey: 'grant_id',
 		otherKey: 'organization_id'
 	});
