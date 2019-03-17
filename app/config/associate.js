@@ -1,6 +1,6 @@
 module.exports = models => {
 	const {
-		Donor,
+		donor,
 		Grant,
 		Cause,
 		Region,
@@ -10,8 +10,9 @@ module.exports = models => {
 		GrantsOrganizations,
 		Project
 	} = models;
+	console.log(models);
 
-	Donor.hasMany(Grant, { foreignKey: 'donor_id' });
+	donor.hasMany(Grant, { foreignKey: 'donor_id' });
 
 	Grant.belongsToMany(Organization, {
 		through: 'grants_organizations',
@@ -20,13 +21,4 @@ module.exports = models => {
 	});
 
 	Grant.hasMany(Charge, { foreignKey: 'grant_id' });
-
-	Donor.hasMany(PaymentPlan, {
-		foreignKey: 'subscription_id',
-		sourceKey: 'subscription_id'
-	});
-
-	Grant.hasOne(PaymentPlan, {
-		foreignKey: 'grant_id'
-	});
 };

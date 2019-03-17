@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const Donor = sequelize.define('donors', {
+	const Donor = sequelize.define('Donor', {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,
@@ -44,5 +44,12 @@ module.exports = (sequelize, DataTypes) => {
 		zip: DataTypes.STRING(10),
 		country: DataTypes.STRING
 	});
+
+	Donor.associate = models => {
+		Donor.hasMany(models.Grant, {
+			foreignKey: 'donor_id'
+		});
+	};
+
 	return Donor;
 };

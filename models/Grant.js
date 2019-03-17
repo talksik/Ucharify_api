@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	const Grant = sequelize.define('grants', {
+	const Grant = sequelize.define('Grant', {
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
@@ -27,5 +27,16 @@ module.exports = (sequelize, DataTypes) => {
 			allowNull: false
 		}
 	});
+
+	Grant.associate = models => {
+		Grant.belongsToMany(models.Organization, {
+			through: 'grants_organizations',
+			foreignKey: 'grant_id',
+			otherKey: 'organization_id'
+		});
+
+		Grant.hasMany(models.Charge, { foreignKey: 'grant_id' });
+	};
+
 	return Grant;
 };

@@ -1,8 +1,8 @@
-const Cause = require('./cause.model'),
-	Region = require('./region.model');
+const Cause = require('./Cause'),
+	Region = require('./Region');
 
 module.exports = (sequelize, DataTypes) => {
-	const Organization = sequelize.define('organizations', {
+	const Organization = sequelize.define('Organization', {
 		id: {
 			type: DataTypes.UUID,
 			allowNull: false,

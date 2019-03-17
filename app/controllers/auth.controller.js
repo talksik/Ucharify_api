@@ -1,4 +1,4 @@
-const db = require('../config/db.config.js'),
+const db = require('../../models'),
 	bcrypt = require('bcrypt-nodejs'),
 	jwt = require('jsonwebtoken'),
 	errorMaker = require('../helpers/error.maker'),

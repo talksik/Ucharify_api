@@ -1,13 +1,13 @@
 const Sequelize = require('sequelize'),
-	DonorModel = require('../../models/donor.model.js'),
-	GrantModel = require('../../models/grant.model.js'),
-	CauseModel = require('../../models/cause.model.js'),
-	RegionModel = require('../../models/region.model.js'),
-	OrganizationModel = require('../../models/organization.model.js'),
-	UserModel = require('../../models/user.model.js'),
+	DonorModel = require('../../models/Donor.js/index.js'),
+	GrantModel = require('../../models/Grant.js/index.js'),
+	CauseModel = require('../../models/Cause.js'),
+	RegionModel = require('../../models/Region.js/index.js'),
+	OrganizationModel = require('../../models/Organization.js/index.js'),
+	UserModel = require('../../models/User.js/index.js'),
 	PaymentPlanModel = require('../../models/paymentplan.model'),
-	ChargeModel = require('../../models/charge.model'),
-	GrantsOrganizationsModel = require('../../models/grantsOrganizations.model'),
+	ChargeModel = require('../../models/Charge'),
+	GrantsOrganizationsModel = require('../../models/Grant_Organization'),
 	associate = require('./associate');
 
 const connection_uri = process.env.JAWSDB_MARIA_URL;

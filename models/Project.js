@@ -1,11 +1,11 @@
 'use strict';
 
-const Organization = require('./organization.model'),
-	Cause = require('./cause.model'),
-	Region = require('./region.model');
+const Organization = require('./Organization'),
+	Cause = require('./Cause'),
+	Region = require('./Region');
 
 module.exports = (sequelize, DataTypes) => {
-	const Project = sequelize.define('projects', {
+	const Project = sequelize.define('Project', {
 		id: {
 			type: DataTypes.INTEGER,
 			primaryKey: true,
@@ -21,23 +21,27 @@ module.exports = (sequelize, DataTypes) => {
 		},
 
 		description: DataTypes.STRING,
+		isComplete: {
+			type: DataTypes.BOOLEAN,
+			defaultValue: false
+		},
 
-		cause: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			references: {
-				model: Cause(sequelize, DataTypes),
-				key: 'name'
-			}
-		},
-		region: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			references: {
-				model: Region(sequelize, DataTypes),
-				key: 'name'
-			}
-		},
+		// cause: {
+		// 	type: DataTypes.STRING,
+		// 	allowNull: false,
+		// 	references: {
+		// 		model: Cause(sequelize, DataTypes),
+		// 		key: 'name'
+		// 	}
+		// },
+		// region: {
+		// 	type: DataTypes.STRING,
+		// 	allowNull: false,
+		// 	references: {
+		// 		model: Region(sequelize, DataTypes),
+		// 		key: 'name'
+		// 	}
+		// },
 		organization_id: {
 			type: DataTypes.UUID,
 			allowNull: false,

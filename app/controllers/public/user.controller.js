@@ -1,4 +1,4 @@
-const db = require('../../config/db.config.js'),
+const db = require('../../../models'),
 	errorMaker = require('../../helpers/error.maker');
 
 const { Grant, Cause, Region, Organization, User } = db;
