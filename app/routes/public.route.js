@@ -1,27 +1,31 @@
 const express = require('express'),
 	router = express.Router();
 
-const controllers = require('../controllers/public');
-
-const sgController = require('../controllers/sendgrid.controller');
+const {
+	sendgrid,
+	cause,
+	region,
+	organization,
+	user
+} = require('../controllers');
 
 // Retrieve all causes
-router.get('/causes', controllers.cause.findAll);
+router.get('/causes', cause.getAllCauses);
 
 // Retrieve all regions
-router.get('/regions', controllers.region.findAll);
+router.get('/regions', region.getAllRegions);
 
 // Retrieve all organizations
-router.get('/organizations', controllers.organization.findAll);
+router.get('/organizations', organization.getAllOrganizations);
 
 // Retrieve charities based on inputted search
 // TODO: fix sql injection attack
-router.get('/organizations/:search', controllers.organization.searchOrgs);
+router.get('/organizations/:search', organization.searchOrganizations);
 
 // Add user email to database from the landing page
-router.post('/users/landing', controllers.user.addEmail);
+router.post('/users/landing', user.addEmail);
 
 // Test sending an email
-router.post('/email/test', sgController.testEmail);
+router.post('/email/test', sendgrid.testEmail);
 
 module.exports = router;

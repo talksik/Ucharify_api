@@ -1,5 +1,5 @@
-const db = require('../../../models'),
-	errorMaker = require('../../helpers/error.maker');
+const db = require('../../models'),
+	errorMaker = require('../helpers/error.maker');
 
 const { Grant, Cause, Region, Organization, User } = db;
 

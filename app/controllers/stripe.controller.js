@@ -1,5 +1,5 @@
-const db = require('../../../models'),
-	errorMaker = require('../../helpers/error.maker');
+const db = require('../../models'),
+	errorMaker = require('../helpers/error.maker');
 
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 

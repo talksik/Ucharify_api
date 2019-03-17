@@ -70,8 +70,6 @@ app.use('/api/auth', require('./app/routes/auth.route.js'));
 app.use('/api', require('./app/routes/public.route.js'));
 //admin routes
 app.use('/admin', require('./app/routes/admin.route'));
-//stripe routes
-app.use('/api/stripe', require('./app/routes/stripe.route'));
 
 //404 not found error handling on any other routes
 app.use((req, res, next) => {

@@ -1,12 +1,12 @@
-const db = require('../../../models'),
+const db = require('../../models'),
 	bcrypt = require('bcrypt-nodejs'),
-	errorMaker = require('../../helpers/error.maker'),
+	errorMaker = require('../helpers/error.maker'),
 	uuidv4 = require('uuid/v4');
 
 const Donor = db.Donor;
 
 // Create/post a Donor
-exports.create = (req, res, next) => {
+exports.createDonor = (req, res, next) => {
 	// see if user already in db
 	Donor.findAll({
 		where: {
@@ -53,7 +53,7 @@ exports.create = (req, res, next) => {
 };
 
 // FETCH all Donor
-exports.findAll = (req, res, next) => {
+exports.getAllDonors = (req, res, next) => {
 	Donor.findAll().then(donors => {
 		// Send all donors to Client
 		res.status(200).json({
@@ -64,14 +64,14 @@ exports.findAll = (req, res, next) => {
 };
 
 // Find a Donor by Id
-exports.findById = (req, res) => {
+exports.findDonorById = (req, res) => {
 	Donor.findById(req.params.donor_id).then(donor => {
 		res.send(donor);
 	});
 };
 
 // Delete a Donor by Id
-exports.delete = (req, res) => {
+exports.deleteDonor = (req, res) => {
 	const id = req.params.donor_id;
 	Donor.destroy({
 		where: { id: id }

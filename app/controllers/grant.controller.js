@@ -1,13 +1,20 @@
-const db = require('../../../models'),
-	errorMaker = require('../../helpers/error.maker');
+const db = require('../../models'),
+	errorMaker = require('../helpers/error.maker');
 
 const stripe = require('./stripe.controller');
-const sendgrid = require('../sendgrid.controller');
+const sendgrid = require('./sendgrid.controller');
 
-const { Grant, Cause, Region, Organization, GrantOrganization, sequelize } = db;
-console.log(db);
+const {
+	Grant,
+	Cause,
+	Region,
+	Organization,
+	GrantOrganization,
+	Project,
+	sequelize
+} = db;
 // Create a grant for certain donor
-exports.create = async (req, res, next) => {
+exports.createGrant = async (req, res, next) => {
 	const user = req.user;
 
 	var { name, monthly, organizations, amount, stripeToken } = req.body;
@@ -49,10 +56,12 @@ exports.create = async (req, res, next) => {
 			};
 		});
 
+		// mapping between bundle and orgs
 		await GrantOrganization.bulkCreate(grantsOrgs, {
 			transaction
 		});
 
+		// one time charge
 		await stripe.grantCharge({
 			grant,
 			stripeToken,
@@ -63,6 +72,7 @@ exports.create = async (req, res, next) => {
 			user
 		});
 
+		// send email
 		await sendgrid.paymentReceipt({
 			organizations,
 			total_amount: actual_total,
@@ -83,7 +93,7 @@ exports.create = async (req, res, next) => {
 };
 
 // Find grants with causes, regions, and organizations by donor_id
-exports.findByDonorId = (req, res, next) => {
+exports.findGrantsByDonorId = (req, res, next) => {
 	const donor_id = req.user.id;
 
 	Grant.findAll({
@@ -101,7 +111,7 @@ exports.findByDonorId = (req, res, next) => {
 		.catch(error => next(error));
 };
 
-exports.delete = (req, res, next) => {
+exports.deleteGrant = (req, res, next) => {
 	const { grant_id } = req.body;
 	const user = req.user;
 

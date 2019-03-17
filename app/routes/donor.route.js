@@ -3,34 +3,30 @@ const express = require('express'),
 	checkAuth = require('../middleware/check-auth'),
 	roles = require('../helpers/roles');
 
-const controllers = require('../controllers/donor');
+const { donor, grant, stripe, organization } = require('../controllers');
 
 // POST donor signup
-router.post('/', controllers.donor.create);
+router.post('/', donor.createDonor);
 
 // GET all Donors
-router.get('/', checkAuth(roles.ADMIN), controllers.donor.findAll);
+router.get('/', checkAuth(roles.ADMIN), donor.getAllDonors);
 
 // GET grants with causes, regions, charities by donor_id
-router.get('/grants/', checkAuth(roles.DONOR), controllers.grant.findByDonorId);
+router.get('/grants/', checkAuth(roles.DONOR), grant.findGrantsByDonorId);
 
 /** POST Create grants with following body:
  * - List of id's of selected causes, regions, charities
  * - Monthly: true or false
  * - donor_id
  * */
-router.post(
-	'/grants/',
-	checkAuth(roles.DONOR),
-	controllers.grant.create
-);
+router.post('/grants/', checkAuth(roles.DONOR), grant.createGrant);
 
 // DELETE a grant of a donor
 router.delete(
 	'/grants/',
 	checkAuth(roles.DONOR),
-	controllers.stripe.deleteGrant,
-	controllers.grant.delete
+	stripe.deleteGrant,
+	grant.deleteGrant
 );
 
 // POST to get suggested organizations to distribute to
@@ -38,14 +34,14 @@ router.delete(
 router.post(
 	'/organizations/',
 	checkAuth(roles.DONOR),
-	controllers.organization.findSuggested
+	organization.findSuggestedCharities
 );
 
 // GET min and optimal amount to choose
 router.get(
 	'/organizations/amounts',
 	checkAuth(roles.DONOR),
-	controllers.organization.findAmounts
+	organization.findOptimalBundleAmounts
 );
 
 // // Retrieve a single Donor by Id
