@@ -1,10 +1,10 @@
 const db = require('../../models'),
 	errorMaker = require('../helpers/error.maker'),
-	https = require('https');
+	requestPromise = require('request-promise');
 
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
-const { Donor, Charge, PaymentPlan } = db;
+const { Donor, Organization, Charge, PaymentPlan } = db;
 
 // Subscribe user to plan or one time charge
 exports.grantCharge = async ({
@@ -97,8 +97,8 @@ exports.getExpressUILink = async (req, res, next) => {
 
 // verify the charity after they filled out basic info for express ui
 exports.activateStripeAccount = async (req, res, next) => {
-	const { code } = req.query;
-	console.log(req.query);
+	const { code, state } = req.query;
+	const org_id = state;
 
 	try {
 		var dataString = `client_secret=${
@@ -106,40 +106,24 @@ exports.activateStripeAccount = async (req, res, next) => {
 		}&code=${code}&grant_type=authorization_code`;
 
 		var options = {
-			host: 'connect.stripe.com',
-			path: '/oauth/token',
+			uri: 'https://connect.stripe.com/oauth/token',
 			method: 'POST',
 			body: {
 				client_secret: process.env.STRIPE_KEY,
 				code,
 				grant_type: 'authorization_code'
-			}
+			},
+			json: true
 		};
 
-		// Set up the request
-		const postRequest = new Promise((resolve, reject) => {
-			https
-				.request(options, function(res) {
-					res.setEncoding('utf8');
-					let body = '';
-					res.on('data', data => {
-						body += data;
-					});
-					res.on('end', () => {
-						body = JSON.parse(body);
-					});
-
-					resolve(body);
-				})
-				.on('error', err => {
-					console.log('Error: ' + err.message);
-					reject(err);
-				});
-		});
-
 		// store for current user, get user_id from the state param maybe?
-		const stripeAccRes = await Promise.resolve(postRequest);
-		console.log(stripeAccRes);
+		const stripeAccRes = await requestPromise(options);
+		const { stripe_user_id } = stripeAccRes;
+
+		const updateRes = await db.sequelize.query(
+			'UPDATE organizations SET stripe_account_id = :stripe_user_id WHERE id = :org_id',
+			{ replacements: { stripe_user_id, org_id } }
+		);
 
 		return res.status(302).redirect('http://localhost:8081/org/main/banking');
 	} catch (error) {
