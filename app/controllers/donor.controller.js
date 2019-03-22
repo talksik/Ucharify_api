@@ -80,6 +80,19 @@ exports.deleteDonor = (req, res) => {
 	});
 };
 
+// GET the quick stats for the dashboard
+exports.getDashboardData = async (req, res, next) => {
+	console.log(req.user);
+	const rows = await db.sequelize.query('Select * from donors', {
+		type: db.sequelize.QueryTypes.SELECT
+	});
+
+	res.status(200).json({
+		message: 'Successfully got the stats',
+		rows
+	});
+};
+
 // // Update a Donor
 // exports.update = (req, res) => {
 // 	const id = req.params.donor_id;

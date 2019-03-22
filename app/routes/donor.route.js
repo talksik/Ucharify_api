@@ -44,6 +44,8 @@ router.get(
 	organization.findOptimalBundleAmounts
 );
 
+router.get('/dashboard', checkAuth(roles.DONOR), donor.getDashboardData);
+
 // // Retrieve a single Donor by Id
 // router.get('/:donor_id', donor.findById);
 
