@@ -93,6 +93,25 @@ exports.getExpressUILink = async (req, res, next) => {
 	// get connected stripe account id from db
 	// createLoginLink with stripe function
 	// return to frontend
+	const org_id = req.user.id;
+
+	try {
+		const orgs = await db.sequelize.query(
+			`SELECT stripe_account_id 
+			FROM organizations 
+			WHERE id = :org_id
+			LIMIT 1`,
+			{ replacements: { org_id }, type: db.sequelize.QueryTypes.SELECT }
+		);
+
+		const stripeAccessRes = await stripe.accounts.createLoginLink(
+			orgs[0].stripe_account_id
+		);
+
+		return res.status(200).json({ url: stripeAccessRes.url });
+	} catch (error) {
+		next(error);
+	}
 };
 
 // verify the charity after they filled out basic info for express ui
