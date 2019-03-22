@@ -6,8 +6,6 @@ const express = require('express'),
 	db = require('./models'),
 	morgan = require('morgan');
 
-console.log(db);
-
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

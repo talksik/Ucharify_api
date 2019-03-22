@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.INTEGER,
 			defaultValue: 0
 		},
+		stripe_account_id: {
+			type: DataTypes.UUID,
+			defaultValue: null
+		},
 
 		primary_contact_email: {
 			type: DataTypes.STRING,
