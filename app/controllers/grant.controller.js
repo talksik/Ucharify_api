@@ -93,22 +93,38 @@ exports.createGrant = async (req, res, next) => {
 };
 
 // Find grants with causes, regions, and organizations by donor_id
-exports.findGrantsByDonorId = (req, res, next) => {
+exports.findGrantsByDonorId = async (req, res, next) => {
 	const donor_id = req.user.id;
+	
+	try {
+		const grants = await db.sequelize.query(`
+		Select 
+			g.id, 
+			g.name,
+			g.amount,
+			g.monthly,
+			g.num_causes,
+			g.num_regions,
+			g.donor_id,
+			g.created_at,
+			g.updated_at,
+			o.id as organization_id,
+			o.primary_cause,
+			o.primary_region
+			from grants as g
+				left join GrantOrganizations as go on go.grant_id = g.id
+				left join organizations as o on go.organization_id = o.id
+				where donor_id = "0568eef6-f3cb-480b-933c-d32d540bface";
+		`, {
+			type: db.sequelize.QueryTypes.SELECT
+		});
 
-	Grant.findAll({
-		where: {
-			donor_id: donor_id
-		},
-		include: [Cause, Region, Organization]
-	})
-		.then(grants => {
-			res.status(200).json({
-				grants,
-				number_items: grants.length
-			});
+		return res.status(200).json({
+			grants
 		})
-		.catch(error => next(error));
+	} catch (error) {
+		next(error);
+	}
 };
 
 exports.deleteGrant = (req, res, next) => {
