@@ -1,21 +1,21 @@
-const express = require('express'),
-	router = express.Router(),
-	checkAuth = require('../middleware/check-auth'),
-	roles = require('../helpers/roles');
+const express = require("express"),
+  router = express.Router(),
+  checkAuth = require("../middleware/check-auth"),
+  roles = require("../helpers/roles");
 
-const { organization, cause, region, stripe } = require('../controllers');
+const { organization, cause, region, stripe } = require("../controllers");
 
 // Charity signup route
-router.post('/', organization.createOrganization);
+router.post("/", organization.createOrganization);
 
-// GET Activate org with stripe
-router.get('/stripe/connect', stripe.activateStripeAccount);
+// GET Activate org's stripe connected account
+router.get("/stripe/connect", stripe.activateStripeAccount);
 
-// GET express ui account link
+// GET stripe express ui account link
 router.get(
-	'/stripe/link',
-	checkAuth(roles.ORGANIZATION),
-	stripe.getExpressUILink
+  "/stripe/link",
+  checkAuth(roles.ORGANIZATION),
+  stripe.getExpressUILink
 );
 
 // // Add cause

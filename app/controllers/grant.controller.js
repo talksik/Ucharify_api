@@ -6,6 +6,7 @@ const sendgrid = require("./sendgrid.controller");
 
 const {
   Grant,
+  Charge,
   Cause,
   Region,
   Organization,
@@ -62,7 +63,7 @@ exports.createGrant = async (req, res, next) => {
     });
 
     // one time charge
-    await stripe.grantCharge({
+    const charge = await stripe.grantCharge({
       grant,
       stripeToken,
       stripeToken,
@@ -71,6 +72,16 @@ exports.createGrant = async (req, res, next) => {
       amount,
       user
     });
+
+    await Charge.create(
+      {
+        id: charge.id,
+        amount,
+        description: "One time payment for grant",
+        grant_id: grant.id
+      },
+      { transaction }
+    );
 
     // send email
     await sendgrid.paymentReceipt({
