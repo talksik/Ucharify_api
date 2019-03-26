@@ -118,11 +118,11 @@ exports.findGrantsByDonorId = async (req, res, next) => {
 			g.num_causes,
 			g.num_regions,
 			g.donor_id,
-			GROUP_CONCAT(DISTINCT o.id SEPARATOR ',') AS organization_ids,
-			GROUP_CONCAT(DISTINCT o.name SEPARATOR ',') AS organization_names,
-			GROUP_CONCAT(DISTINCT o.primary_cause SEPARATOR ',') AS causes,
-			GROUP_CONCAT(DISTINCT o.primary_region SEPARATOR ',') AS regions,
-			GROUP_CONCAT(go.amount SEPARATOR ',') AS amounts
+			JSON_ARRAYAGG(o.id) AS organizations_ids,	
+      JSON_ARRAYAGG(o.name) AS organization_names,
+      JSON_ARRAYAGG(go.amount) AS organization_amounts,
+      JSON_ARRAYAGG(o.primary_cause) AS causes,
+      JSON_ARRAYAGG(o.primary_region) AS regions
 		from grants as g
 		inner join GrantOrganizations as go on go.grant_id = g.id
 		left join organizations as o on o.id = go.organization_id
@@ -134,24 +134,14 @@ exports.findGrantsByDonorId = async (req, res, next) => {
 
     // adding in the organizations, causes, and regions for each grant into arrays
     grants.map(grant => {
-      let org_ids = grant.organization_ids.toString().split(",");
-      let org_names = grant.organization_names.toString().split(",");
-      let causes = grant.causes.toString().split(",");
-      let regions = grant.regions.toString().split(",");
-      let amounts = grant.amounts.toString().split(",");
-
       grant.organizations = [];
-      grant.causes = [];
-      grant.regions = [];
 
-      for (var i = 0; i < org_names.length; i++) {
+      for (var i = 0; i < grant.organization_names.length; i++) {
         grant.organizations.push({
-          id: org_ids[i],
-          name: org_names[i],
-          amount: parseInt(amounts[i])
+          id: grant.organizations_ids[i],
+          name: grant.organization_names[i],
+          amount: grant.organization_amounts[i]
         });
-        causes[i] ? grant.causes.push({ name: causes[i] }) : null;
-        regions[i] ? grant.regions.push({ name: regions[i] }) : null;
       }
 
       grant.monthly = grant.monthly == 1 ? true : false;
