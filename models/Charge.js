@@ -1,10 +1,21 @@
-'use strict';
-module.exports = (sequelize, DataTypes) => {
-	const Charge = sequelize.define('Charge', {
-		id: { type: DataTypes.UUID, primaryKey: true, allowNull: false },
-		description: DataTypes.STRING,
-		amount: DataTypes.INTEGER
-	});
+"use strict";
+const PaymentStatus = require("./PaymentStatus");
 
-	return Charge;
+module.exports = (sequelize, DataTypes) => {
+  const Charge = sequelize.define("Charge", {
+    id: { type: DataTypes.UUID, primaryKey: true, allowNull: false },
+    description: DataTypes.STRING,
+    amount: DataTypes.INTEGER,
+
+    payment_status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: PaymentStatus(sequelize, DataTypes),
+        key: "name"
+      }
+    }
+  });
+
+  return Charge;
 };
