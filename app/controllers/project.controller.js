@@ -5,11 +5,15 @@ const db = require('../../models'),
 const { Project } = db;
 
 exports.createProject = async (req, res, next) => {
-	const { org_id } = req.user.id;
+	const organization_id = req.user.id;
 
-	var project = await db.sequelize.query(`
-    SELECT * 
-    FROM project
-    WHERE organization_id = :org_id
-    ORDER BY created_at `);
+	const { title, description } = req.body;
+
+	const project = await Project.create({
+		title,
+		description,
+		organization_id
+	});
+
+	return res.status(201).json({ project });
 };
