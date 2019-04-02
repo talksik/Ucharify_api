@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
 			defaultValue: 0
 		},
 
+		title: {
+			type: DataTypes.STRING(1000),
+			allowNull: false
+		},
 		description: DataTypes.STRING,
 		isComplete: {
 			type: DataTypes.BOOLEAN,

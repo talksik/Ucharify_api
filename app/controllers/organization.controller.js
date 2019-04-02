@@ -181,15 +181,34 @@ exports.createOrganization = async (req, res, next) => {
 };
 
 // FETCH all organizations
-exports.getAllOrganizations = (req, res, next) => {
-	Organization.findAll()
-		.then(organizations => {
-			res.status(200).json({
-				organizations,
-				number_items: organizations.length
-			});
-		})
-		.catch(error => next(error));
+exports.getAllOrganizations = async (req, res, next) => {
+	const QUERY = `
+			select 
+					o.*,
+					p.id as project_id,
+					p.title,
+					p.description,
+					p.isComplete
+			from organizations as o
+			left join (
+					SELECT * from projects 
+					where id in (
+						select 
+							max(id) 
+						from projects 
+						group by organization_id
+						)
+					)
+			as p on p.organization_id = o.id
+    `;
+	const organizations = await db.sequelize.query(QUERY, {
+		type: db.Sequelize.QueryTypes.SELECT
+	});
+
+	return res.status(200).json({
+		organizations,
+		number_items: organizations.length
+	});
 };
 
 // FETCH depending on the given search
