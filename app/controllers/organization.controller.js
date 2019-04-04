@@ -186,8 +186,8 @@ exports.getAllOrganizations = async (req, res, next) => {
 			select 
 					o.*,
 					p.id as project_id,
-					p.title,
-					p.description,
+					p.title as project_title,
+					p.description as project_description,
 					p.isComplete
 			from organizations as o
 			left join (
@@ -234,4 +234,35 @@ exports.searchOrganizations = (req, res, next) => {
 			});
 		})
 		.catch(error => next(error));
+};
+
+exports.getOrganizationById = async (req, res, next) => {
+	const { charityId } = req.params;
+
+	const QUERY = `
+			select 
+					o.*,
+					p.id as project_id,
+					p.title as project_title,
+					p.description as project_description,
+					p.isComplete
+			from organizations as o
+			left join (
+					SELECT * from projects 
+					where id in (
+						select 
+							max(id) 
+						from projects 
+						group by organization_id
+						)
+					)
+			as p on p.organization_id = o.id
+			WHERE o.id = :charityId
+    `;
+	const org = await db.sequelize.query(QUERY, {
+		replacements: { charityId },
+		type: db.Sequelize.QueryTypes.SELECT
+	});
+
+	return res.status(200).json(org[0]);
 };

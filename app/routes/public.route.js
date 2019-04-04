@@ -18,6 +18,9 @@ router.get('/regions', region.getAllRegions);
 // Retrieve all organizations
 router.get('/organizations', organization.getAllOrganizations);
 
+// Retrieve organization by id
+router.get('/organization/:charityId', organization.getOrganizationById);
+
 // Retrieve charities based on inputted search
 // TODO: fix sql injection attack
 router.get('/organizations/:search', organization.searchOrganizations);
