@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
 			primaryKey: true
 		},
 		name: { type: DataTypes.STRING, allowNull: false },
+		profile_pic_url: {
+			type: DataTypes.STRING,
+			allowNull: true
+		},
 		short_description: { type: DataTypes.STRING, allowNull: false },
 		total_received: {
 			type: DataTypes.INTEGER,

@@ -8,11 +8,15 @@ const {
 	cause,
 	region,
 	stripe,
-	project
+	project,
+	image
 } = require('../controllers');
 
 // Charity signup route
 router.post('/', organization.createOrganization);
+
+// Charity upload profile pic
+router.post('/profilepic', image.uploadProfilePic);
 
 // GET Activate org's stripe connected account
 router.get('/stripe/connect', stripe.activateStripeAccount);
