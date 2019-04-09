@@ -7,6 +7,7 @@ const fs = require('fs');
 const fileType = require('file-type');
 const bluebird = require('bluebird');
 const multiparty = require('multiparty');
+var sizeOf = require('image-size');
 
 // configure the keys for accessing AWS
 AWS.config.update({
@@ -35,6 +36,8 @@ const uploadFile = (buffer, name, type) => {
 };
 
 exports.uploadProfilePic = async (req, res, next) => {
+	const charity_id = req.user.id;
+
 	const form = new multiparty.Form();
 
 	form.parse(req, async (error, fields, files) => {
@@ -42,19 +45,33 @@ exports.uploadProfilePic = async (req, res, next) => {
 		try {
 			const path = files.file[0].path;
 			const buffer = fs.readFileSync(path);
+
+			const dimensions = sizeOf(buffer);
+			const ratio = dimensions.height / parseFloat(dimensions.width);
+			if (
+				dimensions.height > 800 ||
+				dimensions.width > 800 ||
+				dimensions.height < 100 ||
+				dimensions.width < 100 ||
+				ratio > 1.5 ||
+				ratio < 0.5
+			)
+				return next(errorMaker(400, 'Invalid image dimensions or type'));
+
 			const type = fileType(buffer);
 			const timestamp = Date.now().toString();
-			const fileName = `bucketFolder/${timestamp}-lg`;
+			const fileName = `charityProfilePic/${timestamp}-lg`;
 			const data = await uploadFile(buffer, fileName, type);
 
 			await sequelize.query(
 				`
 					UPDATE organizations 
 						SET profile_pic_url = :profilePicUrl
+						WHERE id = :charity_id
 				`,
 				{
 					type: db.Sequelize.QueryTypes.UPDATE,
-					replacements: { profilePicUrl: data.Location }
+					replacements: { profilePicUrl: data.Location, charity_id }
 				}
 			);
 

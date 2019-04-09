@@ -16,7 +16,11 @@ const {
 router.post('/', organization.createOrganization);
 
 // Charity upload profile pic
-router.post('/profilepic', image.uploadProfilePic);
+router.post(
+	'/profilepic',
+	checkAuth(roles.ORGANIZATION),
+	image.uploadProfilePic
+);
 
 // GET Activate org's stripe connected account
 router.get('/stripe/connect', stripe.activateStripeAccount);
