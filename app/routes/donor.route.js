@@ -55,11 +55,8 @@ router.get('/dashboard', checkAuth(roles.DONOR), donor.getDashboardData);
 
 router.get('/charges', checkAuth(roles.DONOR), charge.getAllChargesbyDonor);
 
-router.put(
-	'/statusupdate/ribbon/:update_id',
-	checkAuth(roles.DONOR),
-	post.addRibbon
-);
+//TODO: checkAuth so only donors can add ribbons
+router.put('/statusupdate/ribbon/:update_id', post.addRibbon);
 
 // // Retrieve a single Donor by Id
 // router.get('/:donor_id', donor.findById);

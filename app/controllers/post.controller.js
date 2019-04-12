@@ -12,7 +12,9 @@ exports.getStatusUpdatesByOrg = async (req, res, next) => {
 		const posts = await sequelize.query(
 			`
       SELECT * FROM posts
-      WHERE organization_id = :organization_id`,
+      WHERE organization_id = :organization_id
+      ORDER BY created_at DESC
+      LIMIT 6`,
 			{
 				type: db.Sequelize.QueryTypes.SELECT,
 				replacements: { organization_id }
@@ -70,6 +72,7 @@ exports.addRibbon = async (req, res, next) => {
 			message: 'Successfully added ribbon to post!'
 		});
 	} catch (error) {
+		console.log(error);
 		next(error);
 	}
 };
