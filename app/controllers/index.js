@@ -10,5 +10,6 @@ module.exports = {
 	auth: require('./auth.controller'),
 	charge: require('./charge.controller'),
 	project: require('./project.controller'),
-	image: require('./image.controller')
+	image: require('./image.controller'),
+	post: require('./post.controller')
 };

@@ -9,7 +9,8 @@ const {
 	region,
 	stripe,
 	project,
-	image
+	image,
+	post
 } = require('../controllers');
 
 // Charity signup route
@@ -33,6 +34,12 @@ router.get(
 );
 
 router.post('/project', checkAuth(roles.ORGANIZATION), project.createProject);
+
+router.post(
+	'/statusupdate',
+	checkAuth(roles.ORGANIZATION),
+	post.createStatusUpdate
+);
 
 // // Add cause
 // router.post('/cause', checkAuth(roles.ORGANIZATION), cause.createCause);
