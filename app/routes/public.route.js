@@ -6,7 +6,8 @@ const {
 	cause,
 	region,
 	organization,
-	user
+	user,
+	post
 } = require('../controllers');
 
 // Retrieve all causes
@@ -20,6 +21,12 @@ router.get('/organizations', organization.getAllOrganizations);
 
 // Retrieve organization by id
 router.get('/organization/:charityId', organization.getOrganizationById);
+
+// get all posts for an organization
+router.get(
+	'/organizations/statusupdates/:organization_id',
+	post.getStatusUpdatesByOrg
+);
 
 // Retrieve charities based on inputted search
 // TODO: fix sql injection attack

@@ -4,6 +4,27 @@ const db = require('../../models'),
 
 const { Post, sequelize } = db;
 
+// gets all posts for a charity
+exports.getStatusUpdatesByOrg = async (req, res, next) => {
+	const { organization_id } = req.params;
+
+	try {
+		const posts = await sequelize.query(
+			`
+      SELECT * FROM posts
+      WHERE organization_id = :organization_id`,
+			{
+				type: db.Sequelize.QueryTypes.SELECT,
+				replacements: { organization_id }
+			}
+		);
+
+		return res.status(200).json({ posts, total: posts.length });
+	} catch (error) {
+		next(error);
+	}
+};
+
 exports.createStatusUpdate = async (req, res, next) => {
 	const { text } = req.body;
 
@@ -45,9 +66,9 @@ exports.addRibbon = async (req, res, next) => {
 			}
 		);
 
-		return res
-			.status(200)
-			.json({ message: 'Successfully added ribbon to post!' });
+		return res.status(200).json({
+			message: 'Successfully added ribbon to post!'
+		});
 	} catch (error) {
 		next(error);
 	}
