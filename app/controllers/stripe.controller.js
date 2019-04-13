@@ -29,7 +29,7 @@ exports.grantCharge = async ({
 			source: 'tok_visa',
 			description: `Charity Bundle Payment`,
 			statement_descriptor: `charity bundle ${grant.id}`,
-			receipt_email: 'arjun@ucharify.com'
+			receipt_email: donors[0].email
 		});
 
 		let transfers = await organizations.map(async org => {
@@ -40,7 +40,7 @@ exports.grantCharge = async ({
 				amount: stripeOrgAmount - applicationStripeFee,
 				currency: 'usd',
 				source_transaction: charge.id,
-				destination: 'acct_1EAxzUIVW1uo07uH'
+				destination: org.stripe_account_id
 			});
 			return t;
 		});

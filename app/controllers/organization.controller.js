@@ -198,8 +198,8 @@ exports.getAllOrganizations = async (req, res, next) => {
 						from projects 
 						group by organization_id
 						)
-					)
-			as p on p.organization_id = o.id
+					) as p on p.organization_id = o.id
+			where o.is_verified = 1 and o.stripe_account_id IS NOT NULL
     `;
 	const organizations = await db.sequelize.query(QUERY, {
 		type: db.Sequelize.QueryTypes.SELECT
@@ -217,11 +217,31 @@ exports.searchOrganizations = (req, res, next) => {
 	search = '%' + search + '%';
 	const limit = 10;
 
-	const QUERY = `SELECT * from organizations 
-								WHERE name LIKE :search or
-											primary_cause LIKE :search or
-											primary_region LIKE :search
-								LIMIT :limit`;
+	const QUERY = `
+			select 
+					o.*,
+					p.id as project_id,
+					p.title as project_title,
+					p.description as project_description,
+					p.isComplete
+			from organizations as o
+			left join (
+					SELECT * from projects 
+					where id in (
+						select 
+							max(id) 
+						from projects 
+						group by organization_id
+						)
+					) as p on p.organization_id = o.id				
+			WHERE o.is_verified = 1 and o.stripe_account_id IS NOT NULL 
+						and (o.name LIKE :search or
+						o.primary_cause LIKE :search or
+						o.primary_region LIKE :search or
+						p.title LIKE :search)
+			LIMIT :limit
+		`;
+
 	db.sequelize
 		.query(QUERY, {
 			replacements: { search, limit },
