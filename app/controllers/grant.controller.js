@@ -14,14 +14,12 @@ const {
 	Project,
 	sequelize
 } = db;
+
 // Create a grant for certain donor
 exports.createGrant = async (req, res, next) => {
 	const user = req.user;
 
 	var { name, monthly, organizations, amount, stripeToken } = req.body;
-
-	const causes = organizations.map(org => org.primary_cause);
-	const regions = organizations.map(org => org.primary_region);
 
 	actual_total = Math.round(amount * 100) / 100;
 
@@ -41,8 +39,8 @@ exports.createGrant = async (req, res, next) => {
 				name,
 				amount: actual_total,
 				monthly,
-				num_causes: causes.length,
-				num_regions: regions.length
+				num_causes: organizations.length,
+				num_regions: organizations.length
 			},
 			{
 				transaction
@@ -100,7 +98,6 @@ exports.createGrant = async (req, res, next) => {
 		});
 	} catch (error) {
 		if (error) await transaction.rollback();
-		console.log(error);
 		next(error);
 	}
 };

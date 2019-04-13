@@ -4,7 +4,7 @@ const db = require('../../models'),
 
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
-const { Donor, Organization, Charge, PaymentPlan } = db;
+const { Donor, Organization, Charge, PaymentPlan, sequelize } = db;
 
 // Subscribe user to plan or one time charge
 exports.grantCharge = async ({
@@ -15,40 +15,53 @@ exports.grantCharge = async ({
 	amount,
 	user
 }) => {
-	const grant_id = await grant.id;
+	return new Promise(async (resolve, reject) => {
+		const grant_id = await grant.id;
 
-	try {
-		const donors = await Donor.findAll({ where: { id: user.id } });
+		try {
+			const donors = await Donor.findAll({ where: { id: user.id } });
 
-		const stripeAmount = amount * 100;
+			const stripeAmount = amount * 100;
 
-		// charge if yes or no monthly
-		let charge = await stripe.charges.create({
-			amount: stripeAmount,
-			currency: 'usd',
-			source: 'tok_visa',
-			description: `Charity Bundle Payment`,
-			statement_descriptor: `charity bundle ${grant.id}`,
-			receipt_email: donors[0].email
-		});
-
-		let transfers = await organizations.map(async org => {
-			let stripeOrgAmount = Math.round(org.amount * 100);
-			const applicationStripeFee = stripeOrgAmount * 0.05;
-
-			let t = await stripe.transfers.create({
-				amount: stripeOrgAmount - applicationStripeFee,
+			// charge if yes or no monthly
+			let charge = await stripe.charges.create({
+				amount: stripeAmount,
 				currency: 'usd',
-				source_transaction: charge.id,
-				destination: org.stripe_account_id
+				source: 'tok_visa',
+				description: `Charity Bundle Payment`,
+				statement_descriptor: `charity bundle ${grant.id}`,
+				receipt_email: donors[0].email
 			});
-			return t;
-		});
 
-		return charge;
-	} catch (error) {
-		throw error;
-	}
+			let transfers = await organizations.map(async (org, index) => {
+				let stripeOrgAmount = Math.round(org.amount * 100);
+				const applicationStripeFee = stripeOrgAmount * 0.05;
+
+				let orgs_stripe_acc = await sequelize.query(
+					`
+					SELECT stripe_account_id FROM organizations
+					WHERE id = :org_id`,
+					{
+						type: db.Sequelize.QueryTypes.SELECT,
+						replacements: { org_id: org.id }
+					}
+				);
+
+				let t = await stripe.transfers.create({
+					amount: stripeOrgAmount - applicationStripeFee,
+					currency: 'usd',
+					source_transaction: charge.id,
+					destination: orgs_stripe_acc[0].stripe_account_id
+				});
+
+				return t;
+			});
+
+			resolve(charge);
+		} catch (error) {
+			reject(error);
+		}
+	});
 };
 
 // Delete grant's stripe plan under subscription
