@@ -1,0 +1,4 @@
+To run different npm scripts from package.json in heroku application itself:
+1. `heroku login`
+2. `heroku run npm run drop:local -a {heroku_app_name}`
+Note: you may have to also run `npm install` within the application to get some packages to run other scripts.

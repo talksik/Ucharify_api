@@ -8,6 +8,7 @@
 		"test": "nodemon bin/test.js",
 		"drop:local": "DROP_TABLES=true node bin/dev.js",
 		"drop:test": "DROP_TABLES=true node bin/test.js",
+		"drop:prod": "node bin/prod.js",
 		"drop:local:windows": "SET DROP_TABLES=true&& node bin/dev.js",
 		"drop:test:windows": "SET DROP_TABLES=true&& node bin/test.js",
 		"start": "node server.js"
