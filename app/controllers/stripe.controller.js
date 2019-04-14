@@ -147,7 +147,11 @@ exports.activateStripeAccount = async (req, res, next) => {
 			{ replacements: { stripe_user_id, org_id } }
 		);
 
-		return res.status(302).redirect('http://localhost:8081/org/main/');
+		let redirectUrl =
+			process.env.NODE_ENV == 'production'
+				? 'http://thecharify.com/org/main'
+				: 'http://localhost:8081/org/main/';
+		return res.status(302).redirect(redirectUrl);
 	} catch (error) {
 		next(error);
 	}

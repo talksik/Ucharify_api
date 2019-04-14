@@ -18,3 +18,7 @@ Heroku Production database dropping, migrations, and seeding:
 - `heroku apps` to login to env
 - `heroku run DROP_TABLES=true node server.js --app ucharify-api` to drop the tables
 - in local cmd or terminal run `Set NODE_ENV=production& npx sequelize db:seed:all` for seeding production db
+
+
+Sequelize seed data in production. Similar to migrations:
+`npx sequelize db:seed:all --env production` - any other NODE_ENV in place of `production`

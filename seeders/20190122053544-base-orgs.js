@@ -30,7 +30,6 @@ module.exports = {
 				estimate_yearly_operating_cost: 40000,
 
 				is_nonprofit: true,
-				is_verified: true,
 
 				primary_contact_phone: '9493873423',
 				primary_contact_first_name: 'Kamlesh',
@@ -62,7 +61,6 @@ module.exports = {
 				estimate_yearly_operating_cost: 40000,
 
 				is_nonprofit: true,
-				is_verified: true,
 
 				primary_contact_phone: '6254581254',
 				primary_contact_first_name: 'Ajay',
@@ -94,7 +92,6 @@ module.exports = {
 				estimate_yearly_operating_cost: 40000,
 
 				is_nonprofit: true,
-				is_verified: true,
 
 				primary_contact_phone: '6254581254',
 				primary_contact_first_name: 'Leo',
