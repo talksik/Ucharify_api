@@ -109,44 +109,38 @@ exports.getGrantsByDonorId = async (req, res, next) => {
 	try {
 		const grants = await db.sequelize.query(
 			`	
-		Select 
-			g.id, 
-			g.name,
-			g.amount,
-			g.monthly,
-			g.num_causes,
-			g.num_regions,
-      g.donor_id,
-      g.created_at,
-      g.updated_at,
-			JSON_ARRAYAGG(o.id) AS organizations_ids,	
-      JSON_ARRAYAGG(o.name) AS organization_names,
-      JSON_ARRAYAGG(go.amount) AS organization_amounts,
-      JSON_ARRAYAGG(o.primary_cause) AS causes,
-      JSON_ARRAYAGG(o.primary_region) AS regions
-		from grants as g
-		inner join grants_organizations as go on go.grant_id = g.id
-		left join organizations as o on o.id = go.organization_id
-		where donor_id = :donor_id
-		group by g.id, g.name, g.amount, g.monthly, g.num_causes, g.num_regions, g.donor_id;
+			Select * 
+			from grants
+			where donor_id = :donor_id
 		`,
 			{ type: db.sequelize.QueryTypes.SELECT, replacements: { donor_id } }
 		);
 
 		// adding in the organizations, causes, and regions for each grant into arrays
-		grants.map(grant => {
-			grant.organizations = [];
+		await Promise.all(
+			grants.map(async grant => {
+				let grant_organizations = await db.sequelize.query(
+					`
+				Select 
+					go.amount,
+					o.id,
+					o.name,
+					o.primary_cause,
+					o.primary_region
+				from grants_organizations as go
+				left join organizations as o on o.id = go.organization_id
+				where grant_id = :grant_id
+			`,
+					{
+						type: db.sequelize.QueryTypes.SELECT,
+						replacements: { grant_id: grant.id }
+					}
+				);
 
-			for (var i = 0; i < grant.organization_names.length; i++) {
-				grant.organizations.push({
-					id: grant.organizations_ids[i],
-					name: grant.organization_names[i],
-					amount: grant.organization_amounts[i]
-				});
-			}
-
-			grant.monthly = grant.monthly == 1 ? true : false;
-		});
+				grant.organizations = grant_organizations;
+				grant.monthly = grant.monthly == 1 ? true : false;
+			})
+		);
 
 		return res.status(200).json({
 			grants
