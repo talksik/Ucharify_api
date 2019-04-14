@@ -1,12 +1,21 @@
-"use strict";
+'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const PaymentStatus = sequelize.define("PaymentStatus", {
-    name: {
-      type: DataTypes.STRING,
-      primaryKey: true,
-      allowNull: false
-    }
-  });
+	const PaymentStatus = sequelize.define(
+		'PaymentStatus',
+		{
+			name: {
+				type: DataTypes.STRING,
+				primaryKey: true,
+				allowNull: false
+			}
+		},
+		{
+			freezeTableName: true,
 
-  return PaymentStatus;
+			// define the table's name
+			tableName: 'paymentstatuses'
+		}
+	);
+
+	return PaymentStatus;
 };

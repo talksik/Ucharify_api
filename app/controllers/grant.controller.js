@@ -125,7 +125,7 @@ exports.getGrantsByDonorId = async (req, res, next) => {
       JSON_ARRAYAGG(o.primary_cause) AS causes,
       JSON_ARRAYAGG(o.primary_region) AS regions
 		from grants as g
-		inner join GrantOrganizations as go on go.grant_id = g.id
+		inner join grants_organizations as go on go.grant_id = g.id
 		left join organizations as o on o.id = go.organization_id
 		where donor_id = :donor_id
 		group by g.id, g.name, g.amount, g.monthly, g.num_causes, g.num_regions, g.donor_id;
