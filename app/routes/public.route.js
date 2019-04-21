@@ -33,7 +33,7 @@ router.get(
 router.get('/organizations/:search', organization.searchOrganizations);
 
 // Add user email to database from the landing page
-router.post('/users/landing', user.addEmail);
+router.post('/landing/email', user.addEmail);
 
 // Test sending an email
 router.post('/email/test', sendgrid.testEmail);

@@ -19,10 +19,7 @@ exports.addEmail = (req, res, next) => {
 				})
 					.then(donor => {
 						// Send created user to client
-						return res.status(201).json({
-							message: 'User created',
-							donor
-						});
+						return res.status(201).json(donor);
 					})
 					.catch(error => next(error));
 			}
