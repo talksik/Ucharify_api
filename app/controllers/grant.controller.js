@@ -47,7 +47,7 @@ exports.createGrant = async (req, res, next) => {
 			}
 		);
 
-		const grantsOrgs = organizations.map(org => {
+		const grantsOrgs = await organizations.map(async org => {
 			return {
 				grant_id: grant.id,
 				organization_id: org.id,

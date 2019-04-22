@@ -265,7 +265,8 @@ exports.getOrganizationById = async (req, res, next) => {
 					p.id as project_id,
 					p.title as project_title,
 					p.description as project_description,
-					p.isComplete
+					p.isComplete,
+					ta.total_amount as total_amount
 			from organizations as o
 			left join (
 					SELECT * from projects 
@@ -275,8 +276,14 @@ exports.getOrganizationById = async (req, res, next) => {
 						from projects 
 						group by organization_id
 						)
-					)
+					)			
 			as p on p.organization_id = o.id
+			left join (
+					SELECT SUM(amount) as total_amount, organization_id 
+					FROM grants_organizations
+					GROUP BY organization_id					
+				) 
+			as ta on ta.organization_id = o.id
 			WHERE o.id = :charityId
     `;
 	const org = await db.sequelize.query(QUERY, {
