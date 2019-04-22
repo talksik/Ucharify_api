@@ -65,31 +65,31 @@ exports.grantCharge = async ({
 };
 
 // Delete grant's stripe plan under subscription
-exports.deleteGrant = async (req, res, next) => {
-	const { grant_id } = req.body;
+// exports.deleteGrant = async (req, res, next) => {
+// 	const { grant_id } = req.body;
 
-	try {
-		const paymentPlans = await PaymentPlan.findAll({ where: { grant_id } });
+// 	try {
+// 		const paymentPlans = await PaymentPlan.findAll({ where: { grant_id } });
 
-		// check if there are plans for that grant
-		if (!paymentPlans.length) {
-			return res.status(400).json({
-				message: 'Not a valid grant'
-			});
-		} else {
-			const plan = paymentPlans[0];
+// 		// check if there are plans for that grant
+// 		if (!paymentPlans.length) {
+// 			return res.status(400).json({
+// 				message: 'Not a valid grant'
+// 			});
+// 		} else {
+// 			const plan = paymentPlans[0];
 
-			//delete the plan/grant under the subscription for the user
-			await stripe.subscriptionItems.del(plan.sub_item_id);
-			//delete the plan from the main product 'Grants'
-			await stripe.plans.del(plan.plan_id);
-		}
+// 			//delete the plan/grant under the subscription for the user
+// 			await stripe.subscriptionItems.del(plan.sub_item_id);
+// 			//delete the plan from the main product 'Grants'
+// 			await stripe.plans.del(plan.plan_id);
+// 		}
 
-		next();
-	} catch (error) {
-		next(error);
-	}
-};
+// 		next();
+// 	} catch (error) {
+// 		next(error);
+// 	}
+// };
 
 // allows the org to see their stripe account with their balance and payout to their bank
 exports.getExpressUILink = async (req, res, next) => {

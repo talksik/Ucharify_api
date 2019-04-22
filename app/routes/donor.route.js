@@ -28,12 +28,18 @@ router.get('/grants/', checkAuth(roles.DONOR), grant.getGrantsByDonorId);
  * */
 router.post('/grants/', checkAuth(roles.DONOR), grant.createGrant);
 
-// DELETE a grant of a donor
+// Cancel Monthly Payment for a grant of a donor
 router.delete(
-	'/grants/',
+	'/grants/monthly/:grant_id',
 	checkAuth(roles.DONOR),
-	stripe.deleteGrant,
-	grant.deleteGrant
+	grant.cancelMonthlyGrant
+);
+
+// Enable Monthly Payment for a grant of a donor
+router.post(
+	'/grants/monthly/:grant_id',
+	checkAuth(roles.DONOR),
+	grant.enableMonthlyGrant
 );
 
 // POST to get suggested organizations to distribute to

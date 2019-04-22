@@ -150,21 +150,48 @@ exports.getGrantsByDonorId = async (req, res, next) => {
 	}
 };
 
-exports.deleteGrant = (req, res, next) => {
-	const { grant_id } = req.body;
-	const user = req.user;
+exports.cancelMonthlyGrant = async (req, res, next) => {
+	const { grant_id } = req.params;
 
-	Grant.destroy({ where: { id: grant_id, donor_id: user.id } })
-		.then(result => {
-			var message = 'Already Deleted';
-			if (result) {
-				message = 'Grant Deleted';
+	try {
+		await db.sequelize.query(
+			`
+			UPDATE grants
+			SET monthly = 0
+			WHERE Id = :grant_id`,
+			{
+				type: db.sequelize.QueryTypes.UPDATE,
+				replacements: { grant_id }
 			}
+		);
 
-			res.status(201).json({
-				result,
-				message
-			});
-		})
-		.catch(error => next(error));
+		return res.status(200).json({
+			message: 'Successfully cancelled grant monthly payments'
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+exports.enableMonthlyGrant = async (req, res, next) => {
+	const { grant_id } = req.params;
+
+	try {
+		await db.sequelize.query(
+			`
+			UPDATE grants
+			SET monthly = 1
+			WHERE Id = :grant_id`,
+			{
+				type: db.sequelize.QueryTypes.UPDATE,
+				replacements: { grant_id }
+			}
+		);
+
+		return res.status(200).json({
+			message: 'Successfully enabled grant monthly payments'
+		});
+	} catch (error) {
+		next(error);
+	}
 };
