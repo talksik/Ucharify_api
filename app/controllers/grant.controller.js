@@ -6,6 +6,7 @@ const sendgrid = require('./sendgrid.controller');
 
 const {
 	Grant,
+	Donor,
 	Charge,
 	Cause,
 	Region,
@@ -82,11 +83,24 @@ exports.createGrant = async (req, res, next) => {
 			{ transaction }
 		);
 
+		const donors = await sequelize.query(
+			`
+			SELECT email, first_name, last_name
+			FROM donors
+			WHERE id = :donor_id
+			`,
+			{
+				type: db.Sequelize.QueryTypes.SELECT,
+				replacements: { donor_id: user.id }
+			}
+		);
+
 		// send email
 		await sendgrid.paymentReceipt({
+			grant,
 			organizations,
 			total_amount: actual_total,
-			receiver: user.email
+			receiver: donors[0]
 		});
 
 		// commit

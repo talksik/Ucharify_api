@@ -6,7 +6,12 @@ sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const {} = db;
 
-exports.paymentReceipt = async ({ organizations, total_amount, receiver }) => {
+exports.paymentReceipt = async ({
+	grant,
+	organizations,
+	total_amount,
+	receiver
+}) => {
 	try {
 		var charitiesHtml = '';
 
@@ -22,17 +27,18 @@ exports.paymentReceipt = async ({ organizations, total_amount, receiver }) => {
 		});
 
 		const msg = {
-			to: receiver,
+			to: receiver.email,
 			from: { email: 'no-reply@charify.com', name: 'Charify Payments' },
 			template_id: 'd-569f804f5e7749cba66bac1994607280',
 
 			substitutionWrappers: ['{{', '}}'],
 			dynamic_template_data: {
-				donor_name: 'Arjun Patel',
+				donor_name: receiver.first_name,
+				bundle_id: grant.id,
 				charities_list: charitiesHtml,
 				total_amount,
-				date: 'April 1st, 2018',
-				subject: 'Your Charity Bundle Payment - Charify'
+				date: grant.created_at,
+				subject: 'Your Charify Bundle Payment - Charify'
 			}
 		};
 		const sentRes = await sgMail.send(msg);
