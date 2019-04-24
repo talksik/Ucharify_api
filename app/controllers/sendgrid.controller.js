@@ -1,5 +1,6 @@
 const db = require('../../models'),
-	errorMaker = require('../helpers/error.maker');
+	errorMaker = require('../helpers/error.maker'),
+	dateFunctions = require('../helpers/dates');
 
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_KEY);
@@ -26,6 +27,8 @@ exports.paymentReceipt = async ({
 		</tr>`;
 		});
 
+		let currDate = new Date().toDateString();
+
 		const msg = {
 			to: receiver.email,
 			from: { email: 'no-reply@charify.com', name: 'Charify Payments' },
@@ -37,7 +40,7 @@ exports.paymentReceipt = async ({
 				bundle_id: grant.id,
 				charities_list: charitiesHtml,
 				total_amount,
-				date: grant.created_at,
+				date: currDate,
 				subject: 'Your Charify Bundle Payment - Charify'
 			}
 		};
