@@ -118,6 +118,11 @@ module.exports = (sequelize, DataTypes) => {
 			primary_contact_last_name: {
 				type: DataTypes.STRING,
 				allowNull: false
+			},
+
+			charify_credit: {
+				type: DataTypes.INTEGER,
+				defaultValue: 0
 			}
 		},
 		{
