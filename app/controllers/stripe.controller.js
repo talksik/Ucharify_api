@@ -34,9 +34,9 @@ exports.grantCharge = async ({
 			});
 
 			let transfers = await organizations.map(async (org, index) => {
-				let stripeOrgAmount = org.amount;
+				let selectedOrgAmount = org.amount;
 				// this determines how much Charify takes from each donation
-				const applicationStripeFee = stripeOrgAmount * 0.05;
+				const applicationStripeFee = selectedOrgAmount * 0.05;
 
 				let finalAmountToOrg = 0;
 
@@ -50,10 +50,22 @@ exports.grantCharge = async ({
 					}
 				);
 
-				if (currOrg[0].charify_credit > applicationStripeFee) {
-					// take nothing as the middleman
-					finalAmountToOrg = stripeOrgAmount;
-					// take out credit from account
+				if (currOrg[0].charify_credit) {
+					let updated_amt = currOrg[0].charify_credit;
+
+					if (currOrg[0].charify_credit < applicationStripeFee) {
+						updated_amt = 0;
+						// use up credit and take remaining as middle man
+						finalAmountToOrg =
+							selectedOrgAmount -
+							applicationStripeFee +
+							currOrg[0].charify_credit;
+					} else {
+						updated_amt = currOrg[0].charify_credit - applicationStripeFee;
+						// take nothing as the middle man
+						finalAmountToOrg = selectedOrgAmount;
+					}
+
 					await sequelize.query(
 						`
 						UPDATE organizations
@@ -63,11 +75,11 @@ exports.grantCharge = async ({
 							type: db.Sequelize.QueryTypes.UPDATE,
 							replacements: {
 								org_id: org.id,
-								updated_amt: currOrg[0].charify_credit - applicationStripeFee
+								updated_amt
 							}
 						}
 					);
-				} else finalAmountToOrg = stripeOrgAmount - applicationStripeFee;
+				} else finalAmountToOrg = selectedOrgAmount - applicationStripeFee;
 
 				// now scale to match stripe standards
 				let t = await stripe.transfers.create({
