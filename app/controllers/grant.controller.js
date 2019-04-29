@@ -22,7 +22,7 @@ exports.createGrant = async (req, res, next) => {
 
 	var { name, monthly, organizations, amount, stripeToken } = req.body;
 
-	actual_total = Math.round(amount * 100) / 100;
+	actual_total = amount;
 
 	if (!stripeToken) {
 		throw errorMaker(400, 'No stripe token given');
