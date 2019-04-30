@@ -22,9 +22,9 @@ exports.paymentReceipt = async ({
 			<td align="left" width="75%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">${
 				charity.name
 			}</td>
-			<td align="left" width="25%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">$${
-				charity.amount
-			}</td>
+			<td align="left" width="25%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">$${charity.amountWithStripeFees.toFixed(
+				2
+			)}</td>
 		</tr>`;
 		});
 
@@ -41,7 +41,7 @@ exports.paymentReceipt = async ({
 				bundle_id: grant.id,
 				charities_list: charitiesHtml,
 				total_amount,
-				transaction_fees,
+				transaction_fees: transaction_fees.toFixed(2),
 				date: currDate,
 				subject: 'Your Charify Bundle Payment - Charify'
 			}

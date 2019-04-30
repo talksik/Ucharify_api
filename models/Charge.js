@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 		{
 			id: { type: DataTypes.UUID, primaryKey: true, allowNull: false },
 			description: DataTypes.STRING,
-			amount: DataTypes.INTEGER,
+			amount: DataTypes.DOUBLE,
 
 			payment_status: {
 				type: DataTypes.STRING,

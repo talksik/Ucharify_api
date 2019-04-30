@@ -48,19 +48,6 @@ exports.createGrant = async (req, res, next) => {
 			}
 		);
 
-		const grantsOrgs = organizations.map(org => {
-			return {
-				grant_id: grant.id,
-				organization_id: org.id,
-				amount: org.amount
-			};
-		});
-
-		// mapping between bundle and orgs
-		await GrantOrganization.bulkCreate(grantsOrgs, {
-			transaction
-		});
-
 		// one time charge
 		const charge = await stripe.grantCharge({
 			grant,
@@ -70,6 +57,19 @@ exports.createGrant = async (req, res, next) => {
 			monthly,
 			amount,
 			user
+		});
+
+		const grantsOrgs = organizations.map(org => {
+			return {
+				grant_id: grant.id,
+				organization_id: org.id,
+				amount: org.finalAmountToOrg
+			};
+		});
+
+		// mapping between bundle and orgs
+		await GrantOrganization.bulkCreate(grantsOrgs, {
+			transaction
 		});
 
 		await Charge.create(
