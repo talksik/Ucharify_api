@@ -34,10 +34,17 @@ exports.grantCharge = async ({
 			});
 
 			let transfers = await organizations.map(async (org, index) => {
-				let selectedOrgAmount = org.amount;
+				const selectedOrgAmount = org.amount;
 				// this determines how much Charify takes from each donation
-				const applicationStripeFee = selectedOrgAmount * 0.05;
+				const stripeFee =
+					Math.round((selectedOrgAmount * 0.029 + 0.3) * 1e2) / 1e2;
+				org.amount = org.amount - stripeFee;
 
+				const applicationFee =
+					Math.round(selectedOrgAmount * 0.025 * 1e2) / 1e2;
+
+				const applicationAndStripeFee = applicationFee + stripeFee;
+				console.log(applicationAndStripeFee);
 				let finalAmountToOrg = 0;
 
 				let currOrg = await sequelize.query(
@@ -53,15 +60,15 @@ exports.grantCharge = async ({
 				if (currOrg[0].charify_credit) {
 					let updated_amt = currOrg[0].charify_credit;
 
-					if (currOrg[0].charify_credit < applicationStripeFee) {
+					if (currOrg[0].charify_credit < applicationAndStripeFee) {
 						updated_amt = 0;
 						// use up credit and take remaining as middle man
 						finalAmountToOrg =
 							selectedOrgAmount -
-							applicationStripeFee +
+							applicationAndStripeFee +
 							currOrg[0].charify_credit;
 					} else {
-						updated_amt = currOrg[0].charify_credit - applicationStripeFee;
+						updated_amt = currOrg[0].charify_credit - applicationAndStripeFee;
 						// take nothing as the middle man
 						finalAmountToOrg = selectedOrgAmount;
 					}
@@ -79,7 +86,7 @@ exports.grantCharge = async ({
 							}
 						}
 					);
-				} else finalAmountToOrg = selectedOrgAmount - applicationStripeFee;
+				} else finalAmountToOrg = selectedOrgAmount - applicationAndStripeFee;
 
 				// now scale to match stripe standards
 				let t = await stripe.transfers.create({
@@ -91,6 +98,9 @@ exports.grantCharge = async ({
 
 				return t;
 			});
+
+			// to show the transaction fees in email to giver
+			charge.transaction_fees = Math.round((amount * 0.029 + 0.3) * 1e2) / 1e2;
 
 			resolve(charge);
 		} catch (error) {

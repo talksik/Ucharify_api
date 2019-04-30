@@ -11,6 +11,7 @@ exports.paymentReceipt = async ({
 	grant,
 	organizations,
 	total_amount,
+	transaction_fees,
 	receiver
 }) => {
 	try {
@@ -40,6 +41,7 @@ exports.paymentReceipt = async ({
 				bundle_id: grant.id,
 				charities_list: charitiesHtml,
 				total_amount,
+				transaction_fees,
 				date: currDate,
 				subject: 'Your Charify Bundle Payment - Charify'
 			}

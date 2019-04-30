@@ -100,6 +100,7 @@ exports.createGrant = async (req, res, next) => {
 			grant,
 			organizations,
 			total_amount: actual_total,
+			transaction_fees: charge.transaction_fees,
 			receiver: donors[0]
 		});
 

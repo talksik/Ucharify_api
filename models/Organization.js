@@ -121,7 +121,7 @@ module.exports = (sequelize, DataTypes) => {
 			},
 
 			charify_credit: {
-				type: DataTypes.INTEGER,
+				type: DataTypes.DOUBLE,
 				defaultValue: 0
 			}
 		},
