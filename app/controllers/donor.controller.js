@@ -82,14 +82,33 @@ exports.deleteDonor = (req, res) => {
 
 // GET the quick stats for the dashboard
 exports.getDashboardData = async (req, res, next) => {
-	console.log(req.user);
-	const rows = await db.sequelize.query('Select * from donors', {
-		type: db.sequelize.QueryTypes.SELECT
-	});
+	const donor_id = req.user.id;
 
-	res.status(200).json({
-		message: 'Successfully got the stats',
-		rows
+	const donors = await db.sequelize.query(
+		`
+			select d.id,
+						d.first_name,
+						sum(g.amount) as total_contributions
+			from donors as d
+			left join grants as g on g.donor_id = d.id
+			group by d.id
+			order by total_contributions DESC
+		`,
+		{
+			type: db.sequelize.QueryTypes.SELECT
+		}
+	);
+
+	let number_donors = donors.length;
+
+	donors.map((donor, index) => {
+		if (donor.id == donor_id) {
+			let percentile = (number_donors - index) / number_donors;
+			return res.status(200).json({
+				message: 'Successfully got the stats',
+				percentile
+			});
+		}
 	});
 };
 
