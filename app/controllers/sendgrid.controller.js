@@ -22,7 +22,7 @@ exports.paymentReceipt = async ({
 			<td align="left" width="75%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">${
 				charity.name
 			}</td>
-			<td align="left" width="25%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">$${charity.amountWithStripeFees.toFixed(
+			<td align="left" width="25%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">$${charity.finalAmountToOrg.toFixed(
 				2
 			)}</td>
 		</tr>`;
