@@ -22,3 +22,4 @@ Heroku Production database dropping, migrations, and seeding:
 
 Sequelize seed data in production. Similar to migrations:
 `npx sequelize db:seed:all --env production` - any other NODE_ENV in place of `production`
+`npx sequelize db:seed --seed 20190122052354-base-causes --env production` to run particular seed file by full file [name] in production
