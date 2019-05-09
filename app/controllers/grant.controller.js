@@ -148,6 +148,7 @@ exports.getGrantsByDonorId = async (req, res, next) => {
 			Select * 
 			from grants
 			where donor_id = :donor_id
+			order by created_at DESC
 		`,
 			{ type: db.sequelize.QueryTypes.SELECT, replacements: { donor_id } }
 		);
@@ -157,17 +158,17 @@ exports.getGrantsByDonorId = async (req, res, next) => {
 			grants.map(async grant => {
 				let grant_organizations = await db.sequelize.query(
 					`
-				Select 
-					go.amount,
-					o.id,
-					o.name,
-					o.primary_cause,
-					o.primary_region,
-					o.profile_pic_url
-				from grants_organizations as go
-				left join organizations as o on o.id = go.organization_id
-				where grant_id = :grant_id
-			`,
+						Select 
+							go.amount,
+							o.id,
+							o.name,
+							o.primary_cause,
+							o.primary_region,
+							o.profile_pic_url
+						from grants_organizations as go
+						left join organizations as o on o.id = go.organization_id
+						where grant_id = :grant_id
+				`,
 					{
 						type: db.sequelize.QueryTypes.SELECT,
 						replacements: { grant_id: grant.id }
