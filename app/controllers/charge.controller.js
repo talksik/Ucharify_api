@@ -19,7 +19,8 @@ exports.getAllChargesbyDonor = async (req, res, next) => {
         c.created_at
         FROM grants as g
         INNER JOIN charges as c on c.grant_id = g.id
-        WHERE g.donor_id = :donor_id;
+				WHERE g.donor_id = :donor_id
+				ORDER BY c.created_at DESC;
 		`,
 			{ type: db.sequelize.QueryTypes.SELECT, replacements: { donor_id } }
 		);
