@@ -48,10 +48,31 @@ exports.createGrant = async (req, res, next) => {
 			}
 		);
 
+		await Promise.all(
+			await organizations.map(async org => {
+				let dbOrgs = await sequelize.query(
+					`
+				SELECT stripe_account_id,
+								ein,
+								charify_credit
+				FROM organizations
+				WHERE id = :org_id
+				`,
+					{
+						type: sequelize.QueryTypes.SELECT,
+						replacements: { org_id: org.id }
+					}
+				);
+
+				org.stripe_account_id = dbOrgs[0].stripe_account_id;
+				org.ein = dbOrgs[0].ein;
+				org.charify_credit = dbOrgs[0].ein;
+			})
+		);
+
 		// one time charge
 		const charge = await stripe.grantCharge({
 			grant,
-			stripeToken,
 			stripeToken,
 			organizations,
 			monthly,

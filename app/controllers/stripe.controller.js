@@ -26,17 +26,22 @@ exports.grantCharge = async ({
 				amount: stripeAmount,
 				currency: 'usd',
 				source: stripeToken,
-				description: `Charify Bundle ${grant.id}`,
-				statement_descriptor: `Charify Bundle ${grant.id}`,
+				description: `UCharify Bundle ${grant.id}`,
+				statement_descriptor: `UCharify Bundle ${grant.id}`,
 				receipt_email: donors[0].email
 			});
+
+			// splitting the .30 cents per transaction to each org
+			let indivThirtyCentFee =
+				Math.round((0.3 / organizations.length) * 1e2) / 1e2;
 
 			let updatedOrgs = await Promise.all(
 				organizations.map(async org => {
 					const selectedOrgAmount = org.amount;
 					// this determines how much payment processing is covered
 					const stripeFee =
-						Math.round((selectedOrgAmount * 0.029 + 0.3) * 1e2) / 1e2;
+						Math.round((selectedOrgAmount * 0.029 + indivThirtyCentFee) * 1e2) /
+						1e2;
 					// this determines how much Charify takes from each donation
 					const applicationFee = 0;
 					//const applicationFee = Math.round(selectedOrgAmount * 0.025 * 1e2) / 1e2;
@@ -44,16 +49,6 @@ exports.grantCharge = async ({
 					const applicationAndStripeFee = applicationFee + stripeFee;
 
 					let finalAmountToOrg = 0;
-
-					let currOrg = await sequelize.query(
-						`
-					SELECT stripe_account_id, charify_credit FROM organizations
-					WHERE id = :org_id`,
-						{
-							type: db.Sequelize.QueryTypes.SELECT,
-							replacements: { org_id: org.id }
-						}
-					);
 
 					// IMPLEMENTATION FOR CHARIFY CREDIT
 					// if (currOrg[0].charify_credit) {
@@ -98,7 +93,7 @@ exports.grantCharge = async ({
 						amount: finalAmountToOrg * 100,
 						currency: 'usd',
 						source_transaction: charge.id,
-						destination: currOrg[0].stripe_account_id
+						destination: org.stripe_account_id
 					});
 
 					return org;

@@ -21,7 +21,7 @@ exports.paymentReceipt = async ({
 			charitiesHtml += `<tr>
 			<td align="left" width="75%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">${
 				charity.name
-			}</td>
+			} <i>(${charity.ein})</i></td>
 			<td align="left" width="25%" style="padding: 6px 12px;font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">$${charity.finalAmountToOrg.toFixed(
 				2
 			)}</td>
@@ -32,7 +32,7 @@ exports.paymentReceipt = async ({
 
 		const msg = {
 			to: receiver.email,
-			from: { email: 'no-reply@charify.com', name: 'Charify Payments' },
+			from: { email: 'no-reply@ucharify.com', name: 'UCharify Payments' },
 			template_id: 'd-569f804f5e7749cba66bac1994607280',
 
 			substitutionWrappers: ['{{', '}}'],
@@ -43,7 +43,7 @@ exports.paymentReceipt = async ({
 				total_amount,
 				transaction_fees: transaction_fees.toFixed(2),
 				date: currDate,
-				subject: 'Your Charify Bundle Payment - Charify'
+				subject: 'Your UCharify Bundle Payment'
 			}
 		};
 		const sentRes = await sgMail.send(msg);
