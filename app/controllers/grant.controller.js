@@ -162,7 +162,8 @@ exports.getGrantsByDonorId = async (req, res, next) => {
 					o.id,
 					o.name,
 					o.primary_cause,
-					o.primary_region
+					o.primary_region,
+					o.profile_pic_url
 				from grants_organizations as go
 				left join organizations as o on o.id = go.organization_id
 				where grant_id = :grant_id
