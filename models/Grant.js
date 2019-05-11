@@ -35,8 +35,17 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.UUID,
 				allowNull: false,
 				references: {
-					model: Donor(sequelize, DataTypes),
+					model: 'donors',
 					key: 'id'
+				}
+			},
+
+			payment_source_id: {
+				type: DataTypes.UUID,
+				references: {
+					//Required field
+					model: 'payment_sources',
+					field: 'id'
 				}
 			}
 		},

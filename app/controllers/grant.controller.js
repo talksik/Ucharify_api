@@ -34,6 +34,7 @@ exports.createGrant = async (req, res, next) => {
 		// get transaction
 		transaction = await sequelize.transaction();
 
+		// creating grant in table
 		const grant = await Grant.create(
 			{
 				donor_id: user.id,
@@ -48,6 +49,7 @@ exports.createGrant = async (req, res, next) => {
 			}
 		);
 
+		// getting data for later use throughout
 		await Promise.all(
 			await organizations.map(async org => {
 				let dbOrgs = await sequelize.query(
@@ -70,7 +72,7 @@ exports.createGrant = async (req, res, next) => {
 			})
 		);
 
-		// one time charge
+		// one time charge with stripe helper
 		const charge = await stripe.grantCharge({
 			grant,
 			stripeToken,
@@ -81,6 +83,7 @@ exports.createGrant = async (req, res, next) => {
 			transaction
 		});
 
+		// mapping between bundle and orgs
 		const grantsOrgs = organizations.map(org => {
 			return {
 				grant_id: grant.id,
@@ -88,12 +91,11 @@ exports.createGrant = async (req, res, next) => {
 				amount: org.finalAmountToOrg
 			};
 		});
-
-		// mapping between bundle and orgs
 		await GrantOrganization.bulkCreate(grantsOrgs, {
 			transaction
 		});
 
+		// creating in charge table for reference
 		await Charge.create(
 			{
 				id: charge.id,

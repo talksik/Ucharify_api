@@ -1,6 +1,7 @@
 const db = require('../../models'),
 	errorMaker = require('../helpers/error.maker'),
-	requestPromise = require('request-promise');
+	requestPromise = require('request-promise'),
+	uuidv4 = require('uuid/v4');
 
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
@@ -20,7 +21,27 @@ exports.grantCharge = async ({
 		try {
 			const donors = await Donor.findAll({ where: { id: user.id } });
 
-			await addCustomerPaymentSource(donors[0], stripeToken, transaction);
+			const paymentSourceId = await addCustomerPaymentSource(
+				donors[0],
+				stripeToken,
+				transaction
+			);
+
+			// set the grant's payment source id to the newly created one
+			await sequelize.query(
+				`
+				UPDATE grants
+				SET payment_source_id = :payment_source_id
+				WHERE id = :grant_id`,
+				{
+					type: sequelize.QueryTypes.UPDATE,
+					replacements: {
+						payment_source_id: paymentSourceId,
+						grant_id: grant.id
+					},
+					transaction
+				}
+			);
 
 			const stripeAmount = amount * 100;
 
@@ -180,7 +201,40 @@ const addCustomerPaymentSource = async (donor, source, transaction = null) => {
 				});
 			}
 
-			resolve();
+			const date = new Date();
+			const paymentSourceId = uuidv4();
+			await sequelize.query(
+				`
+				INSERT INTO payment_sources
+					(id,
+						token,
+						provider,
+						donor_id,
+						createdAt,
+						updatedAt
+					)
+				VALUES
+					(:paymentSourceId,
+						:source,
+						:provider,
+						:donor_id,
+						:date,
+						:date
+					)`,
+				{
+					type: sequelize.QueryTypes.INSERT,
+					replacements: {
+						paymentSourceId,
+						source,
+						provider: 'stripe',
+						donor_id: donor.id,
+						date
+					},
+					transaction
+				}
+			);
+
+			resolve(paymentSourceId);
 		} catch (error) {
 			reject(error);
 		}
