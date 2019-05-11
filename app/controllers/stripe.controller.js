@@ -210,8 +210,8 @@ const addCustomerPaymentSource = async (donor, source, transaction = null) => {
 						token,
 						provider,
 						donor_id,
-						createdAt,
-						updatedAt
+						created_at,
+						updated_at
 					)
 				VALUES
 					(:paymentSourceId,
