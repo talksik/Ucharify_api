@@ -13,11 +13,14 @@ exports.grantCharge = async ({
 	organizations,
 	monthly,
 	amount,
-	user
+	user,
+	transaction
 }) => {
 	return await new Promise(async (resolve, reject) => {
 		try {
 			const donors = await Donor.findAll({ where: { id: user.id } });
+
+			await addCustomerPaymentSource(donors[0], stripeToken, transaction);
 
 			const stripeAmount = amount * 100;
 
@@ -25,6 +28,7 @@ exports.grantCharge = async ({
 			let charge = await stripe.charges.create({
 				amount: stripeAmount,
 				currency: 'usd',
+				customer: donors[0].stripe_id,
 				source: stripeToken,
 				description: `UCharify Bundle ${grant.id}`,
 				statement_descriptor: `UCharify Bundle ${grant.id}`,
@@ -49,38 +53,6 @@ exports.grantCharge = async ({
 					const applicationAndStripeFee = applicationFee + stripeFee;
 
 					let finalAmountToOrg = 0;
-
-					// IMPLEMENTATION FOR CHARIFY CREDIT
-					// if (currOrg[0].charify_credit) {
-					// 	let updated_amt = currOrg[0].charify_credit;
-
-					// 	if (currOrg[0].charify_credit < applicationAndStripeFee) {
-					// 		updated_amt = 0;
-					// 		// use up credit and take remaining as middle man
-					// 		finalAmountToOrg =
-					// 			selectedOrgAmount -
-					// 			applicationAndStripeFee +
-					// 			currOrg[0].charify_credit;
-					// 	} else {
-					// 		updated_amt = currOrg[0].charify_credit - applicationAndStripeFee;
-					// 		// take nothing as the middle man
-					// 		finalAmountToOrg = selectedOrgAmount;
-					// 	}
-
-					// 	await sequelize.query(
-					// 		`
-					// 	UPDATE organizations
-					// 	SET charify_credit = :updated_amt
-					// 	WHERE id = :org_id`,
-					// 		{
-					// 			type: db.Sequelize.QueryTypes.UPDATE,
-					// 			replacements: {
-					// 				org_id: org.id,
-					// 				updated_amt
-					// 			}
-					// 		}
-					// 	);
-					// } else finalAmountToOrg = selectedOrgAmount - applicationAndStripeFee;
 
 					finalAmountToOrg = selectedOrgAmount - applicationAndStripeFee;
 
@@ -111,33 +83,6 @@ exports.grantCharge = async ({
 		}
 	});
 };
-
-// Delete grant's stripe plan under subscription
-// exports.deleteGrant = async (req, res, next) => {
-// 	const { grant_id } = req.body;
-
-// 	try {
-// 		const paymentPlans = await PaymentPlan.findAll({ where: { grant_id } });
-
-// 		// check if there are plans for that grant
-// 		if (!paymentPlans.length) {
-// 			return res.status(400).json({
-// 				message: 'Not a valid grant'
-// 			});
-// 		} else {
-// 			const plan = paymentPlans[0];
-
-// 			//delete the plan/grant under the subscription for the user
-// 			await stripe.subscriptionItems.del(plan.sub_item_id);
-// 			//delete the plan from the main product 'Grants'
-// 			await stripe.plans.del(plan.plan_id);
-// 		}
-
-// 		next();
-// 	} catch (error) {
-// 		next(error);
-// 	}
-// };
 
 // allows the org to see their stripe account with their balance and payout to their bank
 exports.getExpressUILink = async (req, res, next) => {
@@ -192,7 +137,10 @@ exports.activateStripeAccount = async (req, res, next) => {
 
 		const updateRes = await db.sequelize.query(
 			'UPDATE organizations SET stripe_account_id = :stripe_user_id WHERE id = :org_id',
-			{ replacements: { stripe_user_id, org_id } }
+			{
+				type: sequelize.QueryTypes.UPDATE,
+				replacements: { stripe_user_id, org_id }
+			}
 		);
 
 		let redirectUrl = process.env.STRIPE_CONNECT_ACTIVATE_REDIRECT_LINK;
@@ -200,4 +148,41 @@ exports.activateStripeAccount = async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
+};
+
+// Add a reusable source under a customer in stripe
+const addCustomerPaymentSource = async (donor, source, transaction = null) => {
+	return await new Promise(async (resolve, reject) => {
+		try {
+			if (!donor.stripe_id) {
+				const stripeCustomer = await stripe.customers.create({
+					email: donor.email,
+					name: `${donor.first_name} ${donor.last_name}`,
+					source
+				});
+
+				donor.stripe_id = stripeCustomer.id;
+
+				await sequelize.query(
+					`
+					UPDATE donors
+					SET stripe_id = :stripe_id
+					WHERE id = :donor_id`,
+					{
+						type: sequelize.QueryTypes.UPDATE,
+						replacements: { donor_id: donor.id, stripe_id: stripeCustomer.id },
+						transaction
+					}
+				);
+			} else {
+				await stripe.customers.createSource(donor.stripe_id, {
+					source
+				});
+			}
+
+			resolve();
+		} catch (error) {
+			reject(error);
+		}
+	});
 };

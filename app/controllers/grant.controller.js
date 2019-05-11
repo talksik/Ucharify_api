@@ -77,7 +77,8 @@ exports.createGrant = async (req, res, next) => {
 			organizations,
 			monthly,
 			amount,
-			user
+			user,
+			transaction
 		});
 
 		const grantsOrgs = organizations.map(org => {
