@@ -17,6 +17,8 @@ exports.createDonor = (req, res, next) => {
 			if (donors.length >= 1) {
 				return next(errorMaker(409, `Email Exists: ${req.body.email}`));
 			} else {
+				if (req.body.password.length < 6)
+					return next(errorMaker(400, 'Password requirements not met!'));
 				// hash and store
 				bcrypt.hash(req.body.password, null, null, function(error, hash) {
 					// Store hash in your password DB.

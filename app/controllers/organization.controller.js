@@ -107,6 +107,9 @@ exports.createOrganization = async (req, res, next) => {
 	try {
 		transaction = await db.sequelize.transaction();
 
+		if (password.length < 6)
+			return next(errorMaker(400, 'Password requirements not met!'));
+
 		const orgs = await Organization.findAll({
 			where: { primary_contact_email }
 		});
