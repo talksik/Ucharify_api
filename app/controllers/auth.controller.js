@@ -100,7 +100,7 @@ exports.resetPasswordEmail = async (req, res, next) => {
 			user = await sequelize.query(
 				`
 			SELECT id FROM organizations
-			WHERE email = :email`,
+			WHERE primary_contact_email = :email`,
 				{
 					type: sequelize.QueryTypes.SELECT,
 					replacements: { email }
@@ -109,10 +109,7 @@ exports.resetPasswordEmail = async (req, res, next) => {
 		}
 		user = user[0];
 
-		if (!user)
-			return res.status(400).json({
-				message: 'User not found'
-			});
+		if (!user) return next(errorMaker(400, 'Not a valid user'));
 
 		const CODE = uuidv4();
 		const currDate = new Date();
@@ -146,10 +143,78 @@ exports.resetPasswordEmail = async (req, res, next) => {
 			}
 		);
 
-		sendgrid.passwordResetEmail(email, CODE);
+		await sendgrid.passwordResetEmail(email, CODE);
+
 		return res
 			.status(200)
 			.json({ message: 'Successfuly sent password reset email!' });
+	} catch (e) {
+		next(e);
+	}
+};
+
+exports.resetPassword = async (req, res, next) => {
+	try {
+		const { password, code } = req.query;
+
+		var passwordResetRow = await sequelize.query(
+			`
+			SELECT * FROM password_reset
+			WHERE code = :code`,
+			{
+				type: sequelize.QueryTypes.SELECT,
+				replacements: { code }
+			}
+		);
+
+		if (!passwordResetRow.length)
+			return next(errorMaker(400, 'Forbidden to reset password'));
+
+		passwordResetRow = passwordResetRow[0];
+
+		//TODO check the timestamp of the code creation
+		const createdDate = new Date(passwordResetRow.created_at);
+		const currDate = new Date();
+		const diffTime = Math.abs(currDate.getTime() - createdDate.getTime());
+		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+		if (diffDays > 3) return next(errorMaker(400, 'Code expired'));
+
+		const hashedPass = bcrypt.hashSync(password);
+
+		if (passwordResetRow.user_type == 'donor') {
+			await sequelize.query(
+				`
+				UPDATE donors
+				SET password = :password
+				WHERE id = :user_id
+				`,
+				{
+					type: sequelize.QueryTypes.UPDATE,
+					replacements: {
+						password: hashedPass,
+						user_id: passwordResetRow.user_id
+					}
+				}
+			);
+		} else {
+			await sequelize.query(
+				`
+				UPDATE organizations
+				SET password = :password
+				WHERE id = :user_id
+				`,
+				{
+					type: sequelize.QueryTypes.UPDATE,
+					replacements: {
+						password: hashedPass,
+						user_id: passwordResetRow.user_id
+					}
+				}
+			);
+		}
+
+		return res.status(200).json({ message: 'Successfuly reset password!' });
 	} catch (e) {
 		next(e);
 	}

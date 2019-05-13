@@ -14,6 +14,6 @@ router.post('/org/login', auth.orgLogin);
 router.get('/resetpassword', auth.resetPasswordEmail);
 
 // Reset password for either donor or charity after verifying code
-router.post('/resetpassword', auth.resetPasswordEmail);
+router.post('/resetpassword', auth.resetPassword);
 
 module.exports = router;

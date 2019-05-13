@@ -86,17 +86,19 @@ exports.passwordResetEmail = async (receiver, code) => {
 			const msg = {
 				to: receiver,
 				from: { email: 'no-reply@ucharify.com', name: 'UCharify Security' },
-				template_id: 'd-569f804f5e7749cba66bac1994607280',
+				template_id: 'd-f26ce08089914f3a983f8932913ed262',
 
 				substitutionWrappers: ['{{', '}}'],
 				dynamic_template_data: {
-					reset_link: `${process.env.WEB_CLIENT}/resetpassword/form`,
+					reset_link: `${
+						process.env.WEB_CLIENT
+					}/resetpassword/form?code=${code}`,
 					subject: 'Reset Your Password'
 				}
 			};
 			const sentRes = await sgMail.send(msg);
 
-			resolve();
+			resolve(sentRes);
 		} catch (e) {
 			reject(e);
 		}

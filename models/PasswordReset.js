@@ -4,24 +4,24 @@ module.exports = (sequelize, DataTypes) => {
 		'password_reset',
 		{
 			code: {
-				type: Sequelize.STRING,
+				type: DataTypes.STRING,
 				allowNull: false
 			},
 			user_id: {
-				type: Sequelize.UUID,
+				type: DataTypes.UUID,
 				allowNull: false
 			},
 			user_type: {
-				type: Sequelize.STRING,
+				type: DataTypes.STRING,
 				allowNull: false
 			},
 			created_at: {
 				allowNull: false,
-				type: Sequelize.DATE
+				type: DataTypes.DATE
 			},
 			updated_at: {
 				allowNull: false,
-				type: Sequelize.DATE
+				type: DataTypes.DATE
 			}
 		},
 		{}
