@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING,
 				allowNull: true
 			},
-			short_description: { type: DataTypes.Text, allowNull: false },
+			short_description: { type: DataTypes.TEXT, allowNull: false },
 			total_received: {
 				type: DataTypes.INTEGER,
 				defaultValue: 0
